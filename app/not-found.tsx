@@ -1,20 +1,13 @@
-'use client'
-
-import { motion, type Variants } from 'framer-motion'
 import Link from 'next/link'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
-
-const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
-}
 
 export default function NotFound() {
   return (
     <>
       <Header />
       <main
+        aria-labelledby="not-found-heading"
         style={{
           minHeight: 'calc(100vh - 140px)',
           display: 'flex',
@@ -24,10 +17,7 @@ export default function NotFound() {
           padding: '80px',
         }}
       >
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={fadeUp}
+        <div
           style={{
             display: 'flex',
             flexDirection: 'column',
@@ -51,6 +41,7 @@ export default function NotFound() {
 
           {/* Heading */}
           <h1
+            id="not-found-heading"
             style={{
               fontSize: '1.75rem',
               fontWeight: 600,
@@ -87,8 +78,6 @@ export default function NotFound() {
                 fontSize: '0.9rem',
                 textDecoration: 'none',
               }}
-              onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#e05200')}
-              onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#FF5C00')}
             >
               Go Home
             </Link>
@@ -105,13 +94,11 @@ export default function NotFound() {
                 textDecoration: 'none',
                 border: '1px solid #1F1F23',
               }}
-              onMouseEnter={e => (e.currentTarget.style.borderColor = '#FF5C00')}
-              onMouseLeave={e => (e.currentTarget.style.borderColor = '#1F1F23')}
             >
               Browse Templates
             </Link>
           </div>
-        </motion.div>
+        </div>
       </main>
       <Footer />
     </>
