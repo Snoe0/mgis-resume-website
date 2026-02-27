@@ -33,6 +33,9 @@ All routes live under `app/` and use the Next.js App Router convention:
 | `/editor` | `app/editor/page.tsx` |
 | `/reviewer` | `app/reviewer/page.tsx` |
 | `/creator/[id]` | `app/creator/[id]/page.tsx` |
+| `/creators` | `app/(main)/creators/page.tsx` |
+| `/sell` | `app/(main)/sell/page.tsx` |
+| `(404)` | `app/not-found.tsx` |
 
 `app/layout.tsx` wraps every page with `<Header>` and `<Footer>` from `components/`. Global CSS and Inter font are loaded here.
 
@@ -66,6 +69,10 @@ Defined in `app/globals.css` (`@theme` block). Key conventions:
 - **Primary button**: `#FF5C00` background, white text, hover to `#e05200`
 - **Container**: `max-width: 1280px`, `margin: 0 auto`, `padding: 0 80px`
 - **Animations**: Framer Motion on landing page only — `fadeUp` variant (`opacity 0→1, y 24→0`), `staggerChildren: 0.08`
+
+## Workflow
+
+- **Commit after every meaningful change** — each new file or logical edit gets its own `git commit` before moving to the next task. Push to `origin main` when a feature is complete.
 
 ## Key Constraints
 
