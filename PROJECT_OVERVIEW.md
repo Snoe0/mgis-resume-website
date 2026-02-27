@@ -1,4 +1,4 @@
-# TemplateMint - Project Overview
+# ResumeForge - Project Overview
 
 ## Quick Start
 

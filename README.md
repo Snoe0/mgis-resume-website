@@ -1,4 +1,4 @@
-# TemplateMint - Resume Template Marketplace
+# ResumeForge - Resume Template Marketplace
 
 A modern, professional web application for browsing, purchasing, and customizing resume templates. Built with Next.js 14, TypeScript, and Tailwind CSS.
 

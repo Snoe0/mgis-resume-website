@@ -1,4 +1,4 @@
-# TemplateMint Design System
+# ResumeForge Design System
 
 ## Color Palette
 

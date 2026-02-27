@@ -1,6 +1,6 @@
 # Product Requirements Document (PRD)
 
-**Product Name (Working):** *TemplateMint*
+**Product Name (Working):** *ResumeForge*
 **Document Version:** v1.0
 **Author:** Yuri Korolev
 **Last Updated:** 2026-01-23
@@ -11,7 +11,7 @@
 
 ### 1.1 Summary
 
-TemplateMint is a **resume template marketplace** that allows users to **browse, edit, and purchase professionally designed resume templates**, with built-in tools for **PDF editing and AI-assisted resume review**. The platform is optimized for **search visibility** around high-intent keywords such as *“resume templates”*.
+ResumeForge is a **resume template marketplace** that allows users to **browse, edit, and purchase professionally designed resume templates**, with built-in tools for **PDF editing and AI-assisted resume review**. The platform is optimized for **search visibility** around high-intent keywords such as *“resume templates”*.
 
 The goal is to provide a **premium, modern alternative** to outdated resume builders by focusing on **design quality, usability, and actionable feedback**.
 

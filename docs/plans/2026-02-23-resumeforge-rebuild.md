@@ -2,7 +2,7 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** Wipe the existing light-blue TemplateMint codebase and rebuild Landing + Browse pages faithfully from the design.pen dark theme.
+**Goal:** Wipe the existing light-blue ResumeForge codebase and rebuild Landing + Browse pages faithfully from the design.pen dark theme.
 
 **Architecture:** Next.js 16 App Router + TypeScript + Tailwind CSS v4. Design tokens in `globals.css` `@theme` block. Framer Motion for landing page scroll animations only. All data is static mock data.
 
@@ -1606,7 +1606,7 @@ Open `http://localhost:3000/browse`. Sidebar with filters on left, card grid on 
 
 **Step 1: Update CLAUDE.md brand name**
 
-In `CLAUDE.md`, change `TemplateMint` → `ResumeForge` in the project description line.
+In `CLAUDE.md`, change `ResumeForge` → `ResumeForge` in the project description line.
 
 **Step 2: Run lint**
 
@@ -1630,7 +1630,7 @@ Expected: ✓ Compiled successfully. Zero errors. If build fails, fix TypeScript
 git add -A
 git commit -m "feat: rebuild UI from design.pen — dark theme, ResumeForge brand, Framer Motion scroll animations
 
-- Wipe old TemplateMint blue design system
+- Wipe old ResumeForge blue design system
 - New dark design tokens in globals.css (@theme)
 - Instrument Serif + Inter via next/font/google
 - Header: sticky dark nav with orange CTA

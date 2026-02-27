@@ -1,4 +1,4 @@
-# TemplateMint - Pages Checklist
+# ResumeForge - Pages Checklist
 
 ## How to View All Pages
 
@@ -17,7 +17,7 @@ Visit each URL to see the complete UI:
 - Two CTA buttons (Browse Templates, Start with Free Templates)
 - Featured Templates section (6 template cards)
 - How It Works (3 steps with icons)
-- Why Choose TemplateMint? (Benefits with icons)
+- Why Choose ResumeForge? (Benefits with icons)
 - Creator CTA (gradient blue background)
 - FAQ accordion (6 questions)
 
@@ -270,4 +270,4 @@ These are UI-only (expected):
 6. Check mobile menu
 7. Test all navigation links
 
-Enjoy exploring TemplateMint!
+Enjoy exploring ResumeForge!

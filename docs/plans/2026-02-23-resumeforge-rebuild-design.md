@@ -2,7 +2,7 @@
 
 ## Overview
 
-Full wipe and rebuild of the TemplateMint codebase to match the `design.pen` dark theme. Implements Landing and Browse pages for this pass. Brand name changes from TemplateMint → ResumeForge.
+Full wipe and rebuild of the ResumeForge codebase to match the `design.pen` dark theme. Implements Landing and Browse pages for this pass. Brand name changes from ResumeForge → ResumeForge.
 
 ## Decisions
 
