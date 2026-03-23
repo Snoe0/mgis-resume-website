@@ -4,12 +4,9 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { Check, Download, Eye } from 'lucide-react'
 import TemplateCard from '@/components/TemplateCard'
+import { getTemplateById, templates } from '@/lib/templates'
 
-const relatedTemplates = [
-  { id: '2', title: 'Minimal Dark', creator: 'James Park', price: 18 as const, rating: 4.7 },
-  { id: '4', title: 'Clean Modern', creator: 'Aria Lee', price: 22 as const, rating: 4.8 },
-  { id: '6', title: 'Tech Startup', creator: 'Nina Patel', price: 26 as const, rating: 4.9 },
-]
+const relatedTemplates = templates.filter(t => !['1', '3', '5'].includes(t.id)).slice(0, 3)
 
 const features = [
   {
@@ -51,7 +48,7 @@ export default function TemplatePage({ params }: { params: { id: string } }) {
   const [activeTab, setActiveTab] = useState<'features' | 'reviews' | 'related'>('features')
   const [previewTheme, setPreviewTheme] = useState<'dark' | 'light'>('dark')
 
-  const template = {
+  const template = getTemplateById(params.id) ?? {
     id: params.id,
     title: 'Executive Pro',
     creator: 'Sarah Chen',

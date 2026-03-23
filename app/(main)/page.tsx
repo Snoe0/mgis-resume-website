@@ -5,15 +5,7 @@ import { useState } from 'react'
 import { motion, type Variants } from 'framer-motion'
 import { ArrowRight, FileText, Zap, TrendingUp } from 'lucide-react'
 import TemplateCard from '@/components/TemplateCard'
-
-const featuredTemplates = [
-  { id: '1', title: 'Executive Pro', creator: 'Sarah Chen', price: 24 as const, rating: 4.9 },
-  { id: '2', title: 'Minimal Dark', creator: 'James Park', price: 18 as const, rating: 4.7 },
-  { id: '3', title: 'Creative Portfolio', creator: 'Mia Torres', price: 29 as const, rating: 5.0 },
-  { id: '4', title: 'Clean Modern', creator: 'Aria Lee', price: 22 as const, rating: 4.8 },
-  { id: '5', title: 'Academic Scholar', creator: 'Tom Walsh', price: 'free' as const, rating: 4.6 },
-  { id: '6', title: 'Tech Startup', creator: 'Nina Patel', price: 26 as const, rating: 4.9 },
-]
+import { templates as featuredTemplates } from '@/lib/templates'
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 24 },
