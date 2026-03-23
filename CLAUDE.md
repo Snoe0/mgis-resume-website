@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-**ResumeForge** — a resume template marketplace with a built-in PDF editor and AI-powered resume reviewer. Stripe Checkout (sandbox) is integrated for template purchases; orders are stored in Supabase.
+**ResumeForge** — a resume template marketplace with a built-in PDF editor and AI-powered resume optimizer. Stripe Checkout (sandbox) is integrated for template purchases; orders are stored in Supabase.
 
 ## Commands
 
@@ -31,7 +31,7 @@ All routes live under `app/` and use the Next.js App Router convention:
 | `/browse` | `app/browse/page.tsx` |
 | `/template/[id]` | `app/template/[id]/page.tsx` |
 | `/editor` | `app/editor/page.tsx` |
-| `/reviewer` | `app/reviewer/page.tsx` |
+| `/optimizer` | `app/(main)/optimizer/page.tsx` |
 | `/creator/[id]` | `app/creator/[id]/page.tsx` |
 | `/creators` | `app/(main)/creators/page.tsx` |
 | `/sell` | `app/(main)/sell/page.tsx` |

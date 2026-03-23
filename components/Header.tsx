@@ -8,7 +8,7 @@ const navLinks = [
   { label: 'Browse', href: '/browse' },
   { label: 'Creators', href: '/creators' },
   { label: 'Editor', href: '/editor' },
-  { label: 'Reviewer', href: '/reviewer' },
+  { label: 'Optimizer', href: '/optimizer' },
 ]
 
 export default function Header() {

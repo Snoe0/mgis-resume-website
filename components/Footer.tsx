@@ -5,7 +5,7 @@ import Link from 'next/link'
 const productLinks = [
   { label: 'Browse Templates', href: '/browse' },
   { label: 'Editor', href: '/editor' },
-  { label: 'AI Reviewer', href: '/reviewer' },
+  { label: 'AI Optimizer', href: '/optimizer' },
   { label: 'Pricing', href: '/pricing' },
 ]
 
