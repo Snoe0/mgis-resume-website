@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { Check, Download, Eye } from 'lucide-react'
+import { Check, Download, Eye, Loader2 } from 'lucide-react'
 import TemplateCard from '@/components/TemplateCard'
 import { getTemplateById, templates } from '@/lib/templates'
 
@@ -47,6 +47,29 @@ const reviews = [
 export default function TemplatePage({ params }: { params: { id: string } }) {
   const [activeTab, setActiveTab] = useState<'features' | 'reviews' | 'related'>('features')
   const [previewTheme, setPreviewTheme] = useState<'dark' | 'light'>('dark')
+  const [purchasing, setPurchasing] = useState(false)
+
+  const handlePurchase = async () => {
+    if (template.price === 'free') {
+      window.location.href = `/checkout/success?free=true&templateId=${template.id}`
+      return
+    }
+    setPurchasing(true)
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ templateId: template.id }),
+      })
+      const data = await res.json()
+      if (data.url) {
+        window.location.href = data.url
+      }
+    } catch (error) {
+      console.error('Purchase error:', error)
+      setPurchasing(false)
+    }
+  }
 
   const template = getTemplateById(params.id) ?? {
     id: params.id,
@@ -277,33 +300,44 @@ export default function TemplatePage({ params }: { params: { id: string } }) {
                 fontWeight: '400',
               }}
             >
-              ${template.price}
+              {template.price === 'free' ? 'Free' : `$${template.price}`}
             </span>
-            <span style={{ color: '#8B8B90', fontSize: '13px', fontFamily: 'var(--font-inter), Inter, sans-serif' }}>one-time</span>
+            {template.price !== 'free' && (
+              <span style={{ color: '#8B8B90', fontSize: '13px', fontFamily: 'var(--font-inter), Inter, sans-serif' }}>one-time</span>
+            )}
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <button
+              onClick={handlePurchase}
+              disabled={purchasing}
               style={{
                 padding: '14px',
-                backgroundColor: '#FF5C00',
+                backgroundColor: purchasing ? '#994700' : '#FF5C00',
                 color: '#FFFFFF',
                 borderRadius: '8px',
                 border: 'none',
                 fontSize: '15px',
                 fontWeight: '600',
-                cursor: 'pointer',
+                cursor: purchasing ? 'not-allowed' : 'pointer',
                 fontFamily: 'var(--font-inter), Inter, sans-serif',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '8px',
                 transition: 'background-color 0.15s',
+                opacity: purchasing ? 0.7 : 1,
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e05200')}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#FF5C00')}
+              onMouseEnter={(e) => { if (!purchasing) e.currentTarget.style.backgroundColor = '#e05200' }}
+              onMouseLeave={(e) => { if (!purchasing) e.currentTarget.style.backgroundColor = '#FF5C00' }}
             >
-              <Download size={16} /> Purchase Template
+              {purchasing ? (
+                <><Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> Processing...</>
+              ) : template.price === 'free' ? (
+                <><Download size={16} /> Download Free Template</>
+              ) : (
+                <><Download size={16} /> Purchase Template — ${template.price}</>
+              )}
             </button>
             <Link
               href={`/editor?template=${template.id}`}
