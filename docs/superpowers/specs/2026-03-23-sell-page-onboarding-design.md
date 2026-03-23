@@ -11,18 +11,20 @@ Transform the `/sell` marketing page into a 5-step seller onboarding flow. Remov
 
 ### Remove
 - `app/(main)/creators/page.tsx` — creators grid page
-- `app/(main)/creator/[id]/page.tsx` — individual creator profile page (entire `creator/` directory)
+- `app/(main)/creator/[id]/` — entire creator profile directory
 - "Creators" nav link from `components/Header.tsx`
 - Remove `/creators` and `/creator/[id]` from CLAUDE.md routing table
+- Remove "View Creator Profile" link in `app/(main)/template/[id]/page.tsx` (links to deleted `/creator/[id]` route)
 
-### Add — Supabase Auth (browser-side)
+### Add — Supabase Auth
 - `lib/supabase-browser.ts` — browser Supabase client using `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- Auth context/provider or hook for session state across the app
-- Sign-in/sign-up modal or inline form (email + password via Supabase Auth)
-- All users authenticate the same way; the sell flow is gated behind auth
+- `components/AuthProvider.tsx` — `'use client'` context provider wrapping the app in `app/layout.tsx`. Listens to `onAuthStateChange`, exposes `user`, `signIn`, `signUp`, `signOut` via `useAuth()` hook.
+- Auth state persists across page navigations via the provider
+- Header shows user email + "Sign Out" when authenticated (replaces the removed "Creators" link slot)
+- The sell flow gates Steps 2-5 behind auth (Step 1 handles sign-in/sign-up)
 
 ### Add — Seller Onboarding (`app/(main)/sell/page.tsx`)
-Single `'use client'` file replacing the current marketing page. Contains a 5-step form flow:
+`'use client'` page replacing the current marketing page. Step components co-located in `app/(main)/sell/steps/` for maintainability. Contains a 5-step form flow:
 
 **Step 1 — Account Info (Sign Up / Sign In)**
 - If not authenticated: email + password sign-up/sign-in form using Supabase Auth
@@ -84,8 +86,9 @@ Single `'use client'` file replacing the current marketing page. Contains a 5-st
 **No Framer Motion** — per CLAUDE.md, animations are landing page only.
 
 ### Environment Variables (new)
-- `NEXT_PUBLIC_SUPABASE_URL` — Supabase project URL (public)
+- `NEXT_PUBLIC_SUPABASE_URL` — Supabase project URL (public, same value as existing `SUPABASE_URL`)
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY` — Supabase anonymous/public key
+- Update `.env.local.example` to include both new vars
 
 ### Header Change
 Remove "Creators" from the `navLinks` array in `components/Header.tsx`. "Sell Templates" CTA button remains, still points to `/sell`.
@@ -93,7 +96,7 @@ Remove "Creators" from the `navLinks` array in `components/Header.tsx`. "Sell Te
 ### CLAUDE.md Updates
 - Remove `/creators` and `/creator/[id]` from routing table
 - Note Supabase Auth integration in Key Constraints or Libraries section
-- Add `lib/supabase-browser.ts` to Libraries section
+- Add `lib/supabase-browser.ts` and `components/AuthProvider.tsx` to relevant sections
 
 ## Data Flow
 
