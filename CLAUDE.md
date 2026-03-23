@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-**ResumeForge** — a resume template marketplace with a built-in PDF editor and AI-powered resume reviewer. Currently a fully designed UI with mock data; no backend is implemented yet.
+**ResumeForge** — a resume template marketplace with a built-in PDF editor and AI-powered resume reviewer. Stripe Checkout (sandbox) is integrated for template purchases; orders are stored in Supabase.
 
 ## Commands
 
@@ -35,7 +35,17 @@ All routes live under `app/` and use the Next.js App Router convention:
 | `/creator/[id]` | `app/creator/[id]/page.tsx` |
 | `/creators` | `app/(main)/creators/page.tsx` |
 | `/sell` | `app/(main)/sell/page.tsx` |
+| `/checkout/success` | `app/(main)/checkout/success/page.tsx` |
+| `/checkout/cancel` | `app/(main)/checkout/cancel/page.tsx` |
 | `(404)` | `app/not-found.tsx` |
+
+### API Routes
+
+| Route | Method | Purpose |
+|-------|--------|---------|
+| `/api/checkout` | POST | Creates a Stripe Checkout Session for a template |
+| `/api/checkout/verify` | GET | Verifies a Stripe session (used by success page) |
+| `/api/webhooks/stripe` | POST | Stripe webhook — writes completed orders to Supabase |
 
 `app/layout.tsx` wraps every page with `<Header>` and `<Footer>` from `components/`. Global CSS and Inter font are loaded here.
 
@@ -49,7 +59,14 @@ Located in `components/`:
 
 ### Data
 
-All data is **hardcoded mock data** inside each page file. There is no API, database, or state management layer. Filters, pagination, and interactive buttons are UI-only.
+Template data is centralized in `lib/templates.ts` and imported by all pages. Orders are stored in a Supabase `orders` table via Stripe webhooks. Filters, pagination, and interactive buttons are UI-only.
+
+### Libraries (`lib/`)
+
+- `lib/templates.ts` — shared template data, types, and `getTemplateById()` helper
+- `lib/stripe.ts` — server-side Stripe instance
+- `lib/stripe-client.ts` — client-side `loadStripe` helper
+- `lib/supabase.ts` — server-side Supabase admin client
 
 ### Path Alias
 
@@ -76,6 +93,17 @@ Defined in `app/globals.css` (`@theme` block). Key conventions:
 
 ## Key Constraints
 
-- All pages are purely presentational; no form submissions, filter logic, or network calls work
-- The project is structured for future backend integration (REST or GraphQL + NextAuth + Stripe)
+- Stripe is in **sandbox/test mode** — use test card `4242 4242 4242 4242` for purchases
+- Guest checkout only (no auth required)
+- Free templates bypass Stripe and go directly to the success page
 - `next.config.js` allows remote images from any HTTPS hostname (`hostname: '**'`)
+
+### Environment Variables
+
+See `.env.local.example` for the full list. Required:
+- `STRIPE_SECRET_KEY` — Stripe test secret key (`sk_test_...`)
+- `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` — Stripe test publishable key (`pk_test_...`)
+- `STRIPE_WEBHOOK_SECRET` — Stripe webhook signing secret (`whsec_...`)
+- `NEXT_PUBLIC_BASE_URL` — App base URL (default `http://localhost:3000`)
+- `SUPABASE_URL` — Supabase project URL
+- `SUPABASE_SERVICE_ROLE_KEY` — Supabase service role key
