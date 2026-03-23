@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { CheckCircle, Download, ArrowRight, Loader2 } from 'lucide-react'
@@ -15,6 +15,18 @@ interface VerifiedSession {
 }
 
 export default function CheckoutSuccessPage() {
+  return (
+    <Suspense fallback={
+      <div style={{ backgroundColor: '#0A0A0B', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Loader2 size={48} style={{ color: '#FF5C00', animation: 'spin 1s linear infinite' }} />
+      </div>
+    }>
+      <CheckoutSuccessContent />
+    </Suspense>
+  )
+}
+
+function CheckoutSuccessContent() {
   const searchParams = useSearchParams()
   const sessionId = searchParams.get('session_id')
   const isFree = searchParams.get('free') === 'true'
