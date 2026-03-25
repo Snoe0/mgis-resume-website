@@ -32,8 +32,6 @@ All routes live under `app/` and use the Next.js App Router convention:
 | `/template/[id]` | `app/template/[id]/page.tsx` |
 | `/editor` | `app/editor/page.tsx` |
 | `/optimizer` | `app/(main)/optimizer/page.tsx` |
-| `/creator/[id]` | `app/creator/[id]/page.tsx` |
-| `/creators` | `app/(main)/creators/page.tsx` |
 | `/sell` | `app/(main)/sell/page.tsx` |
 | `/checkout/success` | `app/(main)/checkout/success/page.tsx` |
 | `/checkout/cancel` | `app/(main)/checkout/cancel/page.tsx` |
@@ -54,8 +52,9 @@ All routes live under `app/` and use the Next.js App Router convention:
 Located in `components/`:
 - `Header.tsx` — sticky nav with mobile hamburger menu
 - `Footer.tsx` — site footer with four link columns
-- `TemplateCard.tsx` — reusable card for template listings (used in browse, homepage, creator profile, template detail)
+- `TemplateCard.tsx` — reusable card for template listings (used in browse, homepage, template detail)
 - `FAQSection.tsx` — accordion FAQ used on the homepage
+- `AuthProvider.tsx` — `'use client'` auth context wrapping `(main)` layout; exposes `useAuth()` hook
 
 ### Data
 
@@ -67,6 +66,7 @@ Template data is centralized in `lib/templates.ts` and imported by all pages. Or
 - `lib/stripe.ts` — server-side Stripe instance
 - `lib/stripe-client.ts` — client-side `loadStripe` helper
 - `lib/supabase.ts` — server-side Supabase admin client
+- `lib/supabase-browser.ts` — browser-side Supabase client (auth & public operations)
 
 ### Path Alias
 
@@ -94,7 +94,7 @@ Defined in `app/globals.css` (`@theme` block). Key conventions:
 ## Key Constraints
 
 - Stripe is in **sandbox/test mode** — use test card `4242 4242 4242 4242` for purchases
-- Guest checkout only (no auth required)
+- Supabase Auth is integrated for user sign-in/sign-up (used by seller onboarding; checkout remains guest-only for now)
 - Free templates bypass Stripe and go directly to the success page
 - `next.config.js` allows remote images from any HTTPS hostname (`hostname: '**'`)
 
@@ -107,3 +107,5 @@ See `.env.local.example` for the full list. Required:
 - `NEXT_PUBLIC_BASE_URL` — App base URL (default `http://localhost:3000`)
 - `SUPABASE_URL` — Supabase project URL
 - `SUPABASE_SERVICE_ROLE_KEY` — Supabase service role key
+- `NEXT_PUBLIC_SUPABASE_URL` — Supabase project URL (public)
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` — Supabase anonymous key

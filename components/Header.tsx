@@ -3,16 +3,17 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { Menu, X } from 'lucide-react'
+import { useAuth } from '@/components/AuthProvider'
 
 const navLinks = [
   { label: 'Browse', href: '/browse' },
-  { label: 'Creators', href: '/creators' },
   { label: 'Editor', href: '/editor' },
   { label: 'Optimizer', href: '/optimizer' },
 ]
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false)
+  const { user, signOut } = useAuth()
 
   return (
     <header
@@ -79,6 +80,37 @@ export default function Header() {
 
         {/* CTA */}
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          {user && (
+            <>
+              <span
+                style={{
+                  color: '#8B8B90',
+                  fontSize: '13px',
+                  fontFamily: 'var(--font-inter), Inter, sans-serif',
+                }}
+                className="hidden sm:inline"
+              >
+                {user.email}
+              </span>
+              <button
+                onClick={() => signOut()}
+                style={{
+                  color: '#8B8B90',
+                  fontSize: '13px',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontFamily: 'var(--font-inter), Inter, sans-serif',
+                  transition: 'color 0.15s',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = '#FFFFFF')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = '#8B8B90')}
+                className="hidden sm:inline"
+              >
+                Sign Out
+              </button>
+            </>
+          )}
           <Link
             href="/sell"
             style={{

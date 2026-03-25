@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { use, useState } from 'react'
 import { Check, Download, Eye, Loader2 } from 'lucide-react'
 import TemplateCard from '@/components/TemplateCard'
 import { getTemplateById, templates } from '@/lib/templates'
@@ -44,9 +44,9 @@ const reviews = [
   },
 ]
 
-export default function TemplatePage({ params }: { params: { id: string } }) {
+export default function TemplatePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params)
   const [activeTab, setActiveTab] = useState<'features' | 'reviews' | 'related'>('features')
-  const [previewTheme, setPreviewTheme] = useState<'dark' | 'light'>('dark')
   const [purchasing, setPurchasing] = useState(false)
 
   const handlePurchase = async () => {
@@ -71,8 +71,8 @@ export default function TemplatePage({ params }: { params: { id: string } }) {
     }
   }
 
-  const template = getTemplateById(params.id) ?? {
-    id: params.id,
+  const template = getTemplateById(id) ?? {
+    id: id,
     title: 'Executive Pro',
     creator: 'Sarah Chen',
     creatorId: '1',
@@ -83,9 +83,9 @@ export default function TemplatePage({ params }: { params: { id: string } }) {
   }
 
   const stars = Math.round(template.rating)
-  const previewBg = previewTheme === 'dark' ? '#1A1A1D' : '#F8F8F5'
-  const previewText = previewTheme === 'dark' ? '#FFFFFF' : '#0A0A0B'
-  const previewMuted = previewTheme === 'dark' ? '#8B8B90' : '#666670'
+  const previewBg = '#F8F8F5'
+  const previewText = '#0A0A0B'
+  const previewMuted = '#666670'
 
   return (
     <div style={{ backgroundColor: '#0A0A0B', minHeight: '100vh' }}>
@@ -128,40 +128,6 @@ export default function TemplatePage({ params }: { params: { id: string } }) {
       >
         {/* Left: Resume preview */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          {/* Theme toggle */}
-          <div
-            style={{
-              display: 'inline-flex',
-              backgroundColor: '#141417',
-              border: '1px solid #1F1F23',
-              borderRadius: '8px',
-              padding: '4px',
-              alignSelf: 'flex-start',
-            }}
-          >
-            {(['dark', 'light'] as const).map((theme) => (
-              <button
-                key={theme}
-                onClick={() => setPreviewTheme(theme)}
-                style={{
-                  padding: '6px 20px',
-                  borderRadius: '6px',
-                  backgroundColor: previewTheme === theme ? '#FF5C00' : 'transparent',
-                  color: previewTheme === theme ? '#FFFFFF' : '#8B8B90',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontSize: '13px',
-                  fontFamily: 'var(--font-inter), Inter, sans-serif',
-                  fontWeight: previewTheme === theme ? '600' : '400',
-                  transition: 'all 0.15s',
-                  textTransform: 'capitalize',
-                }}
-              >
-                {theme}
-              </button>
-            ))}
-          </div>
-
           {/* Resume card */}
           <div
             style={{
@@ -228,7 +194,7 @@ export default function TemplatePage({ params }: { params: { id: string } }) {
                     key={skill}
                     style={{
                       padding: '4px 12px',
-                      backgroundColor: previewTheme === 'dark' ? '#1F1F23' : '#E8E8E4',
+                      backgroundColor: '#E8E8E4',
                       borderRadius: '100px',
                       color: previewMuted,
                       fontSize: '12px',
@@ -269,14 +235,9 @@ export default function TemplatePage({ params }: { params: { id: string } }) {
             >
               {template.title}
             </h1>
-            <Link
-              href={`/creator/${template.creatorId}`}
-              style={{ color: '#8B8B90', fontSize: '14px', textDecoration: 'none', fontFamily: 'var(--font-inter), Inter, sans-serif' }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = '#FFFFFF')}
-              onMouseLeave={(e) => (e.currentTarget.style.color = '#8B8B90')}
-            >
+            <span style={{ color: '#8B8B90', fontSize: '14px', fontFamily: 'var(--font-inter), Inter, sans-serif' }}>
               by {template.creator}
-            </Link>
+            </span>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
