@@ -1,6 +1,22 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 
-export const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_KEY!
-)
+let client: SupabaseClient | null = null
+
+export function getSupabase(): SupabaseClient {
+  if (!client) {
+    const url = process.env.SUPABASE_URL
+    const key = process.env.SUPABASE_SERVICE_KEY
+    if (!url || !key) {
+      throw new Error('Missing SUPABASE_URL or SUPABASE_SERVICE_KEY environment variables')
+    }
+    client = createClient(url, key)
+  }
+  return client
+}
+
+// Backward-compatible named export (lazy getter)
+export const supabase = new Proxy({} as SupabaseClient, {
+  get(_, prop) {
+    return (getSupabase() as unknown as Record<string | symbol, unknown>)[prop]
+  },
+})
