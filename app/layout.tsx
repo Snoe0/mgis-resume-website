@@ -1,4 +1,3 @@
-```tsx
 import type { Metadata } from 'next'
 import { Inter, Instrument_Serif } from 'next/font/google'
 import Script from 'next/script'
@@ -61,4 +60,3 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     </html>
   )
 }
-```
