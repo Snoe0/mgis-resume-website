@@ -32,13 +32,16 @@ export default function PdfThumbnail({ url, height = 220, className = '' }: PdfT
         const canvas = canvasRef.current
         if (!canvas) return
 
-        // Scale to fit the requested height
+        // Render at 3× resolution then scale down with CSS for sharp text
+        const dpr = 3
         const unscaled = page.getViewport({ scale: 1 })
-        const scale = height / unscaled.height
+        const scale = (height / unscaled.height) * dpr
         const viewport = page.getViewport({ scale })
 
         canvas.height = viewport.height
         canvas.width = viewport.width
+        canvas.style.width = `${viewport.width / dpr}px`
+        canvas.style.height = `${height}px`
 
         await page.render({
           canvasContext: canvas.getContext('2d')!,
@@ -86,8 +89,7 @@ export default function PdfThumbnail({ url, height = 220, className = '' }: PdfT
       {/* The actual rendered canvas */}
       <canvas
         ref={canvasRef}
-        className="w-full h-full object-cover object-top"
-        style={{ display: loading || error ? 'none' : 'block' }}
+        style={{ display: loading || error ? 'none' : 'block', maxWidth: '100%' }}
       />
     </div>
   )
