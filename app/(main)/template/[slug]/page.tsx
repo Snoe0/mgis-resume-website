@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { use, useState } from 'react'
 import { Check, Download, Loader2 } from 'lucide-react'
 import TemplateCard from '@/components/TemplateCard'
+import PdfThumbnail from '@/components/PdfThumbnail'
 import { getTemplateBySlug, templates } from '@/lib/templates'
 
 const features = [
@@ -79,8 +80,8 @@ export default function TemplatePage({ params }: { params: Promise<{ slug: strin
     <div className="bg-bg-base min-h-screen">
 
       {/* Breadcrumb */}
-      <div className="max-w-[1280px] mx-auto px-20 pt-6">
-        <div className="flex gap-2 items-center text-[13px]">
+      <div className="max-w-[1280px] mx-auto px-6 md:px-20 pt-6">
+        <div className="flex gap-2 items-center text-[13px] flex-wrap">
           {[
             { label: 'Home', href: '/' },
             { label: 'Browse', href: '/browse' },
@@ -98,26 +99,21 @@ export default function TemplatePage({ params }: { params: Promise<{ slug: strin
       </div>
 
       {/* Two-column section */}
-      <div className="max-w-[1280px] mx-auto px-20 pt-8 pb-16 grid grid-cols-[1fr_380px] gap-12 items-start">
+      <div className="max-w-[1280px] mx-auto px-6 md:px-20 pt-6 md:pt-8 pb-10 md:pb-16 grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6 md:gap-12 items-start">
 
         {/* Left: PDF preview */}
-        <div className="rounded-xl overflow-hidden border border-border-default bg-[#F8F8F5]" style={{ minHeight: 700 }}>
+        <div className="rounded-xl overflow-hidden border border-border-default w-full">
           {pdfUrl ? (
-            <iframe
-              src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
-              title={`${template.title} preview`}
-              className="w-full border-0"
-              style={{ height: 840 }}
-            />
+            <PdfThumbnail url={pdfUrl} height={840} />
           ) : (
-            <div className="flex items-center justify-center h-[700px] text-text-secondary text-sm">
+            <div className="flex items-center justify-center h-[700px] bg-[#141417] text-text-secondary text-sm">
               No preview available
             </div>
           )}
         </div>
 
         {/* Right: Purchase card */}
-        <div className="sticky top-20 bg-bg-card border border-border-default rounded-2xl p-8 flex flex-col gap-6">
+        <div className="lg:sticky lg:top-20 bg-bg-card border border-border-default rounded-2xl p-6 md:p-8 flex flex-col gap-6">
           <div className="flex flex-col gap-2">
             <h1 className="font-serif text-[28px] text-text-primary font-normal m-0">
               {template.title}
@@ -180,7 +176,7 @@ export default function TemplatePage({ params }: { params: Promise<{ slug: strin
 
       {/* Tabs */}
       <div className="border-t border-b border-border-default bg-bg-elevated">
-        <div className="max-w-[1280px] mx-auto px-20 flex">
+        <div className="max-w-[1280px] mx-auto px-6 md:px-20 flex overflow-x-auto">
           {(['features', 'reviews', 'related'] as const).map((tab) => (
             <button
               key={tab}
@@ -198,11 +194,11 @@ export default function TemplatePage({ params }: { params: Promise<{ slug: strin
       </div>
 
       {/* Tab content */}
-      <div className="max-w-[1280px] mx-auto px-20 pt-12 pb-20">
+      <div className="max-w-[1280px] mx-auto px-6 md:px-20 pt-8 md:pt-12 pb-12 md:pb-20">
         {activeTab === 'features' && (
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
             {features.map(({ title, desc }) => (
-              <div key={title} className="bg-bg-card border border-border-default rounded-xl p-7 flex flex-col gap-3">
+              <div key={title} className="bg-bg-card border border-border-default rounded-xl p-6 md:p-7 flex flex-col gap-3">
                 <div className="w-8 h-8 rounded-lg bg-[#FF5C0020] flex items-center justify-center">
                   <Check size={16} color="#FF5C00" />
                 </div>
@@ -236,7 +232,7 @@ export default function TemplatePage({ params }: { params: Promise<{ slug: strin
         )}
 
         {activeTab === 'related' && (
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {relatedTemplates.map((t) => (
               <TemplateCard key={t.id} {...t} />
             ))}

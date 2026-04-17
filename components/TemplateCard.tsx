@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
+import PdfThumbnail from './PdfThumbnail'
 
 interface TemplateCardProps {
   id: string
@@ -38,14 +39,10 @@ export default function TemplateCard({
     <Link href={href} className="no-underline group">
       <div className="bg-bg-card border border-border-default rounded-xl overflow-hidden transition-all duration-200 group-hover:border-accent group-hover:-translate-y-0.5 cursor-pointer">
         {/* Preview area */}
-        <div className="relative h-[220px] bg-[#F8F8F5] flex items-center justify-center overflow-hidden">
-          {previewSrc && isPdf(previewSrc) ? (
-            <iframe
-              src={`${previewSrc}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
-              title={`${title} preview`}
-              className="w-full h-[220px] border-0 pointer-events-none"
-            />
-          ) : previewSrc ? (
+        {previewSrc && isPdf(previewSrc) ? (
+          <PdfThumbnail url={previewSrc} height={220} />
+        ) : previewSrc ? (
+          <div className="relative h-[220px] overflow-hidden">
             <Image
               src={previewSrc}
               alt={`${title} resume template preview`}
@@ -53,7 +50,9 @@ export default function TemplateCard({
               height={500}
               className="w-full h-[220px] object-cover object-top"
             />
-          ) : (
+          </div>
+        ) : (
+          <div className="h-[220px] bg-[#141417] flex items-center justify-center">
             <div className="flex flex-col gap-2 p-6 w-full opacity-15">
               <div className="h-2.5 bg-white rounded w-3/5" />
               <div className="h-[7px] bg-white rounded w-2/5" />
@@ -62,8 +61,8 @@ export default function TemplateCard({
               <div className="h-1.5 bg-white rounded w-[70%]" />
               <div className="h-1.5 bg-white rounded w-3/4" />
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Meta */}
         <div className="p-4 flex flex-col gap-2 font-sans">
