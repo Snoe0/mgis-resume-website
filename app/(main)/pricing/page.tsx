@@ -103,7 +103,7 @@ export default function PricingPage() {
       />
 
       {/* Hero */}
-      <section className="container-page pt-[120px] pb-[64px] text-center">
+      <section className="container-page pt-[72px] pb-[40px] md:pt-[120px] md:pb-[64px] text-center">
         <span className="inline-flex items-center gap-[8px] px-[16px] py-[6px] bg-[#FF5C0015] border border-[#FF5C0040] rounded-[100px] text-accent text-[13px] font-medium mb-[24px]">
           ✦ No subscriptions. Ever.
         </span>
@@ -117,12 +117,12 @@ export default function PricingPage() {
       </section>
 
       {/* Tiers */}
-      <section className="px-[80px] pb-[80px] max-w-[1280px] mx-auto">
-        <div className="grid grid-cols-3 gap-[24px]">
+      <section className="px-6 pb-[56px] md:px-[80px] md:pb-[80px] max-w-[1280px] mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-[16px] md:gap-[24px]">
           {tiers.map((tier) => (
             <div
               key={tier.name}
-              className={`bg-bg-card rounded-[12px] p-[32px] flex flex-col gap-[20px] relative border ${tier.highlighted ? 'border-accent' : 'border-border-default'}`}
+              className={`bg-bg-card rounded-[12px] p-[24px] md:p-[32px] flex flex-col gap-[20px] relative border ${tier.highlighted ? 'border-accent' : 'border-border-default'}`}
             >
               {tier.highlighted && (
                 <span className="absolute top-[-12px] left-1/2 -translate-x-1/2 px-[12px] py-[4px] bg-accent text-text-primary text-[11px] font-semibold rounded-[100px] tracking-[0.5px]">
@@ -175,13 +175,13 @@ export default function PricingPage() {
       </section>
 
       {/* FAQ */}
-      <section className="p-[80px] bg-bg-elevated border-t border-b border-border-default">
+      <section className="px-6 py-[56px] md:p-[80px] bg-bg-elevated border-t border-b border-border-default">
         <div className="max-w-[720px] mx-auto">
-          <div className="text-center mb-[48px]">
-            <h2 className="font-serif text-[36px] text-text-primary font-normal mt-0 mb-[12px]">
+          <div className="text-center mb-[40px] md:mb-[48px]">
+            <h2 className="font-serif text-[28px] md:text-[36px] text-text-primary font-normal mt-0 mb-[12px]">
               Pricing FAQ
             </h2>
-            <p className="text-text-secondary text-[16px] m-0">
+            <p className="text-text-secondary text-[15px] md:text-[16px] m-0">
               Everything you need to know before you buy.
             </p>
           </div>
@@ -205,8 +205,8 @@ export default function PricingPage() {
       </section>
 
       {/* Final CTA */}
-      <section className="container-page p-[80px] text-center">
-        <h2 className="font-serif text-[36px] text-text-primary font-normal mt-0 mb-[24px]">
+      <section className="container-page py-[56px] md:py-[80px] text-center">
+        <h2 className="font-serif text-[28px] md:text-[36px] text-text-primary font-normal mt-0 mb-[24px]">
           Find your template
         </h2>
         <Link

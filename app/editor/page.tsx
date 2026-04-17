@@ -18,8 +18,9 @@ import {
   arrayMove,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { Undo2, Redo2, Bold, Italic, Underline, Eye, FileDown } from 'lucide-react'
+import { Undo2, Redo2, Bold, Italic, Underline, Eye, FileDown, Monitor } from 'lucide-react'
 import type { CSSProperties } from 'react'
+import Link from 'next/link'
 import Header from '@/components/Header'
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -569,7 +570,41 @@ export default function EditorPage() {
   void layout
 
   return (
-    <div className="h-screen flex flex-col bg-bg-base overflow-hidden">
+    <>
+      {/* Mobile warning — editor requires desktop */}
+      <div className="md:hidden min-h-screen flex flex-col bg-bg-base">
+        <Header />
+        <main className="flex-1 flex flex-col items-center justify-center px-6 py-12 text-center gap-5">
+          <div className="w-14 h-14 rounded-full bg-[#FF5C0015] border border-[#FF5C0040] flex items-center justify-center">
+            <Monitor size={26} color="#FF5C00" />
+          </div>
+          <h1 className="font-serif text-[28px] text-text-primary font-normal m-0 max-w-[320px]">
+            The editor works best on desktop
+          </h1>
+          <p className="text-text-secondary text-[15px] leading-[1.6] max-w-[340px] m-0">
+            Our resume editor uses a full-page canvas, drag-and-drop sections,
+            and a sidebar that doesn&apos;t fit on a small screen. Open this
+            page on a laptop or desktop for the best experience.
+          </p>
+          <div className="flex flex-col gap-2.5 w-full max-w-[280px] mt-2">
+            <Link
+              href="/browse"
+              className="inline-flex items-center justify-center px-5 py-3 bg-accent hover:bg-accent-hover transition-colors text-text-primary rounded-lg text-[14px] font-semibold no-underline"
+            >
+              Browse Templates
+            </Link>
+            <Link
+              href="/"
+              className="inline-flex items-center justify-center px-5 py-3 bg-transparent text-text-primary border border-border-default hover:border-text-secondary transition-colors rounded-lg text-[14px] font-medium no-underline"
+            >
+              Back to Home
+            </Link>
+          </div>
+        </main>
+      </div>
+
+      {/* Desktop editor */}
+      <div className="hidden md:flex h-screen flex-col bg-bg-base overflow-hidden">
 
       {/* Visually hidden H1 for accessibility and SEO */}
       <h1 className="sr-only">
@@ -780,6 +815,7 @@ export default function EditorPage() {
           </div>
         </aside>
       </div>
-    </div>
+      </div>
+    </>
   )
 }

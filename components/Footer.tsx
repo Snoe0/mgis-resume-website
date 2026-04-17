@@ -20,8 +20,8 @@ const legalLinks = [
 
 export default function Footer() {
   return (
-    <footer className="bg-bg-elevated border-t border-border-default py-12 px-[80px]">
-      <div className="max-w-[1280px] mx-auto flex justify-between items-start gap-12 flex-wrap">
+    <footer className="bg-bg-elevated border-t border-border-default py-10 md:py-12 px-6 md:px-[80px]">
+      <div className="max-w-[1280px] mx-auto flex flex-col md:flex-row md:justify-between md:items-start gap-10 md:gap-12 md:flex-wrap">
         {/* Brand */}
         <div className="flex flex-col gap-3">
           <span className="font-serif text-[20px] text-text-primary">
@@ -33,7 +33,7 @@ export default function Footer() {
         </div>
 
         {/* Link columns */}
-        <nav aria-label="Footer" className="flex gap-16 flex-wrap">
+        <nav aria-label="Footer" className="grid grid-cols-2 sm:grid-cols-3 gap-8 md:flex md:gap-16 md:flex-wrap">
           <div className="flex flex-col gap-3">
             <span className="text-text-primary text-[13px] font-semibold">
               Product

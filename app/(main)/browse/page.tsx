@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { SlidersHorizontal, X } from 'lucide-react'
 import TemplateCard from '@/components/TemplateCard'
 import { fetchTemplates, type Template } from '@/lib/templates'
 
@@ -13,6 +14,7 @@ export default function BrowsePage() {
   const [activeIndustry, setActiveIndustry] = useState<string[]>([])
   const [activeExp, setActiveExp] = useState<string[]>([])
   const [currentPage, setCurrentPage] = useState(1)
+  const [filtersOpen, setFiltersOpen] = useState(false)
   const PAGE_SIZE = 9
 
   useEffect(() => {
@@ -38,8 +40,8 @@ export default function BrowsePage() {
     <div className="bg-bg-base min-h-screen flex flex-col">
       <div className="flex flex-1">
 
-        {/* ── Sidebar ── */}
-        <aside className="w-[280px] flex-shrink-0 bg-bg-elevated border-r border-border-default px-6 py-8 flex flex-col gap-8 self-stretch">
+        {/* ── Sidebar (desktop) ── */}
+        <aside className="hidden md:flex w-[280px] flex-shrink-0 bg-bg-elevated border-r border-border-default px-6 py-8 flex-col gap-8 self-stretch">
           <span className="text-text-primary text-base font-semibold">
             Filter Templates
           </span>
@@ -59,21 +61,72 @@ export default function BrowsePage() {
           />
         </aside>
 
+        {/* ── Filter drawer (mobile) ── */}
+        {filtersOpen && (
+          <div className="md:hidden fixed inset-0 z-50 flex">
+            <div
+              className="absolute inset-0 bg-black/60"
+              onClick={() => setFiltersOpen(false)}
+              aria-hidden="true"
+            />
+            <aside className="relative w-[85%] max-w-[320px] bg-bg-elevated border-r border-border-default px-6 py-6 flex flex-col gap-6 overflow-y-auto">
+              <div className="flex items-center justify-between">
+                <span className="text-text-primary text-base font-semibold">
+                  Filter Templates
+                </span>
+                <button
+                  onClick={() => setFiltersOpen(false)}
+                  aria-label="Close filters"
+                  className="text-text-secondary bg-transparent border-0 cursor-pointer"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+              <FilterGroup
+                label="INDUSTRY"
+                options={industryFilters}
+                active={activeIndustry}
+                onToggle={(v) => { toggleFilter(activeIndustry, setActiveIndustry, v); setCurrentPage(1) }}
+              />
+              <FilterGroup
+                label="EXPERIENCE LEVEL"
+                options={experienceFilters}
+                active={activeExp}
+                onToggle={(v) => { toggleFilter(activeExp, setActiveExp, v); setCurrentPage(1) }}
+              />
+            </aside>
+          </div>
+        )}
+
         {/* ── Main ── */}
-        <main className="flex-1 px-10 py-8 flex flex-col gap-6">
+        <main className="flex-1 px-6 py-6 md:px-10 md:py-8 flex flex-col gap-6 min-w-0">
           {/* Top bar */}
-          <div className="flex justify-between items-end">
+          <div className="flex justify-between items-end gap-3 flex-wrap">
             <div className="flex flex-col gap-1">
-              <h1 className="font-serif text-4xl text-text-primary font-normal m-0">
+              <h1 className="font-serif text-3xl md:text-4xl text-text-primary font-normal m-0">
                 Browse Templates
               </h1>
               <span className="text-text-secondary text-sm">
                 {loading ? 'Loading…' : `Showing ${filtered.length} template${filtered.length !== 1 ? 's' : ''}`}
               </span>
             </div>
-            <div className="flex items-center gap-2 px-3 py-2 bg-bg-card border border-border-default rounded-md">
-              <span className="text-text-secondary text-[13px]">Sort: Most Popular</span>
-              <span className="text-text-secondary text-[10px]">▾</span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setFiltersOpen(true)}
+                aria-label="Open filters"
+                className="md:hidden flex items-center gap-1.5 px-3 py-2 bg-bg-card border border-border-default rounded-md text-text-secondary text-[13px] cursor-pointer"
+              >
+                <SlidersHorizontal size={14} /> Filters
+                {activeFilters.length > 0 && (
+                  <span className="inline-flex items-center justify-center w-[18px] h-[18px] rounded-full bg-accent text-text-primary text-[11px] font-semibold">
+                    {activeFilters.length}
+                  </span>
+                )}
+              </button>
+              <div className="hidden sm:flex items-center gap-2 px-3 py-2 bg-bg-card border border-border-default rounded-md">
+                <span className="text-text-secondary text-[13px]">Sort: Most Popular</span>
+                <span className="text-text-secondary text-[10px]">▾</span>
+              </div>
             </div>
           </div>
 
@@ -99,7 +152,7 @@ export default function BrowsePage() {
 
           {/* Card grid */}
           {loading ? (
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {Array.from({ length: 9 }).map((_, i) => (
                 <div key={i} className="bg-bg-card border border-border-default rounded-xl overflow-hidden animate-pulse">
                   <div className="h-[220px] bg-[#1F1F23]" />
@@ -122,7 +175,7 @@ export default function BrowsePage() {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {paginated.map((t) => (
                 <TemplateCard key={t.id} {...t} />
               ))}

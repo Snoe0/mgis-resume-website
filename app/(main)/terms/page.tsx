@@ -58,7 +58,7 @@ const sections = [
 export default function TermsPage() {
   return (
     <div className="bg-bg-base min-h-screen">
-      <section className="container-page pt-[120px] pb-[40px] text-center">
+      <section className="container-page pt-[72px] pb-[32px] md:pt-[120px] md:pb-[40px] text-center">
         <span className="inline-flex items-center gap-[8px] px-[16px] py-[6px] bg-[#FF5C0015] border border-[#FF5C0040] rounded-[100px] text-accent text-[13px] font-medium mb-[24px]">
           ✦ Legal
         </span>
@@ -70,8 +70,8 @@ export default function TermsPage() {
         </p>
       </section>
 
-      <section className="px-[80px] pb-[120px] max-w-[860px] mx-auto">
-        <p className="text-text-secondary text-[17px] leading-[1.75] mt-0 mb-[48px]">
+      <section className="px-6 pb-[72px] md:px-[80px] md:pb-[120px] max-w-[860px] mx-auto">
+        <p className="text-text-secondary text-[16px] md:text-[17px] leading-[1.75] mt-0 mb-[48px]">
           Welcome to Resume Marketplace. By using our website and services, you
           agree to the following terms. Please read them carefully before
           making a purchase or creating an account.

@@ -76,7 +76,7 @@ export default function AboutPage() {
       />
 
       {/* Hero */}
-      <section className="container-page pt-[120px] pb-[80px] text-center">
+      <section className="container-page pt-[72px] pb-[48px] md:pt-[120px] md:pb-[80px] text-center">
         <span className="inline-flex items-center gap-[8px] px-[16px] py-[6px] bg-[#FF5C0015] border border-[#FF5C0040] rounded-[100px] text-accent text-[13px] font-medium mb-[24px]">
           ✦ Our Story
         </span>
@@ -90,16 +90,16 @@ export default function AboutPage() {
       </section>
 
       {/* Story */}
-      <section className="px-[80px] pb-[80px] max-w-[860px] mx-auto">
+      <section className="px-6 pb-[56px] md:px-[80px] md:pb-[80px] max-w-[860px] mx-auto">
         <div className="flex flex-col gap-[24px]">
-          <p className="text-text-secondary text-[17px] leading-[1.75] m-0">
+          <p className="text-text-secondary text-[16px] md:text-[17px] leading-[1.75] m-0">
             The ATS landscape is broken. Job seekers spend hours crafting
             resumes that never reach a human recruiter because applicant
             tracking systems silently discard them for using the wrong font, a
             stray icon, or a two-column layout. Meanwhile, off-the-shelf resume
             builders churn out the same generic PDFs everyone else submits.
           </p>
-          <p className="text-text-secondary text-[17px] leading-[1.75] m-0">
+          <p className="text-text-secondary text-[16px] md:text-[17px] leading-[1.75] m-0">
             We started ResumeForge because designers who understand both
             typography and Workday deserve to get paid for their work — and
             candidates deserve resumes that are beautiful, readable by humans,
@@ -107,7 +107,7 @@ export default function AboutPage() {
             reviewed for ATS compatibility before it ships. Creators keep 80%
             of every sale.
           </p>
-          <p className="text-text-secondary text-[17px] leading-[1.75] m-0">
+          <p className="text-text-secondary text-[16px] md:text-[17px] leading-[1.75] m-0">
             AI changes the game. Tools that used to require a professional
             resume coach — keyword gap analysis, impact rewriting, tailored
             cover letters — now take seconds. We believe the bar for resume
@@ -118,22 +118,22 @@ export default function AboutPage() {
       </section>
 
       {/* Values */}
-      <section className="p-[80px] bg-bg-elevated border-t border-b border-border-default">
+      <section className="px-6 py-[56px] md:p-[80px] bg-bg-elevated border-t border-b border-border-default">
         <div className="max-w-[1280px] mx-auto">
-          <div className="text-center mb-[56px]">
-            <h2 className="font-serif text-[36px] text-text-primary font-normal mt-0 mb-[12px]">
+          <div className="text-center mb-[40px] md:mb-[56px]">
+            <h2 className="font-serif text-[28px] md:text-[36px] text-text-primary font-normal mt-0 mb-[12px]">
               What we believe
             </h2>
-            <p className="text-text-secondary text-[16px] m-0">
+            <p className="text-text-secondary text-[15px] md:text-[16px] m-0">
               Three principles that guide every decision we make.
             </p>
           </div>
 
-          <div className="grid grid-cols-3 gap-[24px]">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-[16px] md:gap-[24px]">
             {values.map((v) => (
               <div
                 key={v.title}
-                className="bg-bg-card border border-border-default rounded-[12px] p-[32px] flex flex-col gap-[16px]"
+                className="bg-bg-card border border-border-default rounded-[12px] p-[24px] md:p-[32px] flex flex-col gap-[16px]"
               >
                 {v.icon}
                 <h3 className="text-text-primary text-[17px] font-semibold m-0">
@@ -149,12 +149,12 @@ export default function AboutPage() {
       </section>
 
       {/* By the numbers */}
-      <section className="container-page p-[80px]">
-        <div className="text-center mb-[56px]">
-          <h2 className="font-serif text-[36px] text-text-primary font-normal mt-0 mb-[12px]">
+      <section className="container-page py-[56px] md:py-[80px]">
+        <div className="text-center mb-[40px] md:mb-[56px]">
+          <h2 className="font-serif text-[28px] md:text-[36px] text-text-primary font-normal mt-0 mb-[12px]">
             By the numbers
           </h2>
-          <p className="text-text-secondary text-[16px] m-0">
+          <p className="text-text-secondary text-[15px] md:text-[16px] m-0">
             The impact we&apos;ve had so far.
           </p>
         </div>
@@ -163,12 +163,12 @@ export default function AboutPage() {
           {stats.map((s, i) => (
             <div
               key={s.label}
-              className={`text-center px-[24px] ${i < stats.length - 1 ? 'border-r border-border-default' : ''}`}
+              className={`text-center px-[12px] md:px-[24px] ${i < stats.length - 1 ? 'border-r border-border-default' : ''}`}
             >
-              <div className="font-serif text-[48px] text-text-primary leading-none mb-[8px]">
+              <div className="font-serif text-[32px] md:text-[48px] text-text-primary leading-none mb-[8px]">
                 {s.num}
               </div>
-              <div className="text-text-secondary text-[13px]">
+              <div className="text-text-secondary text-[12px] md:text-[13px]">
                 {s.label}
               </div>
             </div>
@@ -178,14 +178,14 @@ export default function AboutPage() {
 
       {/* CTA */}
       <section
-        className="p-[80px] border-t border-border-default"
+        className="px-6 py-[56px] md:p-[80px] border-t border-border-default"
         style={{ background: 'linear-gradient(135deg, #111113 0%, #1a1012 100%)' }}
       >
         <div className="max-w-[1280px] mx-auto text-center">
-          <h2 className="font-serif text-[40px] text-text-primary font-normal mt-0 mb-[16px]">
+          <h2 className="font-serif text-[32px] md:text-[40px] text-text-primary font-normal mt-0 mb-[16px]">
             Ready to get started?
           </h2>
-          <p className="text-text-secondary text-[17px] leading-[1.6] max-w-[520px] mx-auto mt-0 mb-[32px]">
+          <p className="text-text-secondary text-[16px] md:text-[17px] leading-[1.6] max-w-[520px] mx-auto mt-0 mb-[32px]">
             Find a template, or start earning by selling your own designs.
           </p>
           <div className="flex gap-[12px] justify-center flex-wrap">

@@ -58,7 +58,7 @@ export default function StepReview({ data, onBack, onGoToStep }: StepReviewProps
               <Edit2 size={14} /> Edit
             </button>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <p className={LABEL_CLASS}>Display name</p>
               <p className={VALUE_CLASS}>{data.displayName}</p>
@@ -104,7 +104,7 @@ export default function StepReview({ data, onBack, onGoToStep }: StepReviewProps
               <Edit2 size={14} /> Edit
             </button>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <p className={LABEL_CLASS}>Title</p>
               <p className={VALUE_CLASS}>{data.templateTitle}</p>

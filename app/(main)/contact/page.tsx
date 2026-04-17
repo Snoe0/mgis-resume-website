@@ -73,7 +73,7 @@ export default function ContactPage() {
       />
 
       {/* Hero */}
-      <section className="container-page pt-[120px] pb-[64px] text-center">
+      <section className="container-page pt-[72px] pb-[40px] md:pt-[120px] md:pb-[64px] text-center">
         <span className="inline-flex items-center gap-[8px] px-[16px] py-[6px] bg-[#FF5C0015] border border-[#FF5C0040] rounded-[100px] text-accent text-[13px] font-medium mb-[24px]">
           ✦ We reply fast
         </span>
@@ -87,12 +87,12 @@ export default function ContactPage() {
       </section>
 
       {/* Contact methods */}
-      <section className="px-[80px] pb-[80px] max-w-[1000px] mx-auto">
-        <div className="grid grid-cols-2 gap-[24px]">
+      <section className="px-6 pb-[56px] md:px-[80px] md:pb-[80px] max-w-[1000px] mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-[16px] md:gap-[24px]">
           {contactMethods.map((m) => (
             <div
               key={m.title}
-              className="bg-bg-card border border-border-default rounded-[12px] p-[32px] flex flex-col gap-[16px]"
+              className="bg-bg-card border border-border-default rounded-[12px] p-[24px] md:p-[32px] flex flex-col gap-[16px]"
             >
               {m.icon}
               <h2 className="text-text-primary text-[18px] font-semibold m-0">
@@ -124,7 +124,7 @@ export default function ContactPage() {
       </section>
 
       {/* Hours / response time */}
-      <section className="px-[80px] py-[64px] bg-bg-elevated border-t border-b border-border-default">
+      <section className="px-6 py-[48px] md:px-[80px] md:py-[64px] bg-bg-elevated border-t border-b border-border-default">
         <div className="max-w-[720px] mx-auto text-center">
           <Clock
             size={28}
@@ -143,7 +143,7 @@ export default function ContactPage() {
       </section>
 
       {/* Back to home */}
-      <section className="container-page px-[80px] py-[64px] text-center">
+      <section className="container-page py-[48px] md:py-[64px] text-center">
         <Link
           href="/browse"
           className="inline-flex items-center px-[24px] py-[10px] border border-border-default hover:border-text-secondary transition-colors rounded-[8px] text-text-primary text-[14px] no-underline"

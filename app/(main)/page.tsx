@@ -84,7 +84,7 @@ export default function HomePage() {
       />
 
       {/* Hero */}
-      <section className="container-page pt-[120px] pb-[100px] text-center">
+      <section className="container-page pt-[72px] pb-[56px] md:pt-[120px] md:pb-[100px] text-center">
         <div className="flex flex-col items-center gap-[24px]">
           {/* Badge */}
           <div>
@@ -136,17 +136,17 @@ export default function HomePage() {
       </section>
 
       {/* Featured Templates */}
-      <section className="container-page py-[80px]">
-        <div className="text-center mb-[48px]">
-          <h2 className="font-serif text-[36px] text-text-primary font-normal mt-0 mb-[12px]">
+      <section className="container-page py-[48px] md:py-[80px]">
+        <div className="text-center mb-[40px] md:mb-[48px]">
+          <h2 className="font-serif text-[28px] md:text-[36px] text-text-primary font-normal mt-0 mb-[12px]">
             Featured Templates
           </h2>
-          <p className="text-text-secondary text-[16px] m-0">
+          <p className="text-text-secondary text-[15px] md:text-[16px] m-0">
             Handpicked by our design team. Used by thousands to land great jobs.
           </p>
         </div>
 
-        <div className="grid grid-cols-3 gap-[16px]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-[16px]">
           {featuredTemplates.map((template) => (
             <TemplateCard key={template.id} {...template} />
           ))}
@@ -163,18 +163,18 @@ export default function HomePage() {
       </section>
 
       {/* How It Works */}
-      <section className="p-[80px] bg-bg-elevated border-t border-b border-border-default">
+      <section className="px-6 py-[56px] md:p-[80px] bg-bg-elevated border-t border-b border-border-default">
         <div className="max-w-[1280px] mx-auto">
-          <div className="text-center mb-[56px]">
-            <h2 className="font-serif text-[36px] text-text-primary font-normal mt-0 mb-[12px]">
+          <div className="text-center mb-[40px] md:mb-[56px]">
+            <h2 className="font-serif text-[28px] md:text-[36px] text-text-primary font-normal mt-0 mb-[12px]">
               How It Works
             </h2>
-            <p className="text-text-secondary text-[16px] m-0">
+            <p className="text-text-secondary text-[15px] md:text-[16px] m-0">
               Three simple steps to your perfect resume
             </p>
           </div>
 
-          <div className="grid grid-cols-3 gap-[24px]">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-[16px] md:gap-[24px]">
             {[
               {
                 step: '01',
@@ -197,7 +197,7 @@ export default function HomePage() {
             ].map(({ step, icon, title, desc }) => (
               <div
                 key={step}
-                className="bg-bg-card border border-border-default rounded-[12px] p-[32px] flex flex-col gap-[16px]"
+                className="bg-bg-card border border-border-default rounded-[12px] p-[24px] md:p-[32px] flex flex-col gap-[16px]"
               >
                 <div className="flex justify-between items-start">
                   {icon}
@@ -219,19 +219,19 @@ export default function HomePage() {
 
       {/* Creator CTA */}
       <section
-        className="p-[80px] border-b border-border-default"
+        className="px-6 py-[56px] md:p-[80px] border-b border-border-default"
         style={{ background: 'linear-gradient(135deg, #111113 0%, #1a1012 100%)' }}
       >
         <div className="max-w-[1280px] mx-auto text-center">
-          <h2 className="font-serif text-[40px] text-text-primary font-normal mt-0 mb-[16px]">
+          <h2 className="font-serif text-[32px] md:text-[40px] text-text-primary font-normal mt-0 mb-[16px]">
             Are You a Designer?
           </h2>
-          <p className="text-text-secondary text-[17px] leading-[1.6] max-w-[520px] mx-auto mt-0 mb-[32px]">
+          <p className="text-text-secondary text-[16px] md:text-[17px] leading-[1.6] max-w-[520px] mx-auto mt-0 mb-[32px]">
             Join our creator community and earn money by selling your resume
             templates to thousands of professionals.
           </p>
 
-          <div className="flex gap-[12px] justify-center mb-[64px]">
+          <div className="flex gap-[12px] justify-center flex-wrap mb-[48px] md:mb-[64px]">
             <Link
               href="/sell"
               className="px-[28px] py-[12px] bg-accent hover:bg-accent-hover transition-colors text-text-primary rounded-[8px] text-[15px] font-semibold no-underline"
@@ -254,12 +254,12 @@ export default function HomePage() {
             ].map(({ num, label }, i, arr) => (
               <div
                 key={label}
-                className={`text-center px-[24px] ${i < arr.length - 1 ? 'border-r border-border-default' : ''}`}
+                className={`text-center px-[12px] md:px-[24px] ${i < arr.length - 1 ? 'border-r border-border-default' : ''}`}
               >
-                <div className="font-serif text-[40px] text-text-primary leading-none mb-[8px]">
+                <div className="font-serif text-[28px] md:text-[40px] text-text-primary leading-none mb-[8px]">
                   {num}
                 </div>
-                <div className="text-text-secondary text-[13px]">
+                <div className="text-text-secondary text-[12px] md:text-[13px]">
                   {label}
                 </div>
               </div>
@@ -269,9 +269,9 @@ export default function HomePage() {
       </section>
 
       {/* FAQ */}
-      <section className="container-page p-[80px]">
-        <div className="text-center mb-[48px]">
-          <h2 className="font-serif text-[36px] text-text-primary font-normal mt-0 mb-[12px]">
+      <section className="container-page py-[56px] md:py-[80px]">
+        <div className="text-center mb-[40px] md:mb-[48px]">
+          <h2 className="font-serif text-[28px] md:text-[36px] text-text-primary font-normal mt-0 mb-[12px]">
             Frequently Asked Questions
           </h2>
         </div>
