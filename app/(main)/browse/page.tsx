@@ -1,21 +1,37 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import TemplateCard from '@/components/TemplateCard'
-import { templates } from '@/lib/templates'
+import { fetchTemplates, type Template } from '@/lib/templates'
 
-const industryFilters = ['Technology', 'Design', 'Business', 'Healthcare']
+const industryFilters = ['Technology', 'Design', 'Business', 'Healthcare', 'Media', 'Science']
 const experienceFilters = ['Entry Level', 'Mid-Level', 'Senior']
 
 export default function BrowsePage() {
-  const [activeIndustry, setActiveIndustry] = useState<string[]>(['Technology', 'Design'])
-  const [activeExp, setActiveExp] = useState<string[]>(['Mid-Level'])
+  const [templates, setTemplates] = useState<Template[]>([])
+  const [loading, setLoading] = useState(true)
+  const [activeIndustry, setActiveIndustry] = useState<string[]>([])
+  const [activeExp, setActiveExp] = useState<string[]>([])
   const [currentPage, setCurrentPage] = useState(1)
+  const PAGE_SIZE = 9
+
+  useEffect(() => {
+    fetchTemplates()
+      .then(setTemplates)
+      .finally(() => setLoading(false))
+  }, [])
 
   const toggleFilter = (list: string[], setList: (v: string[]) => void, value: string) => {
     setList(list.includes(value) ? list.filter((v) => v !== value) : [...list, value])
   }
 
+  const filtered = templates.filter((t) => {
+    const industryMatch = activeIndustry.length === 0 || activeIndustry.includes(t.category ?? '')
+    return industryMatch
+  })
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
+  const paginated = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
   const activeFilters = [...activeIndustry, ...activeExp]
 
   return (
@@ -28,20 +44,18 @@ export default function BrowsePage() {
             Filter Templates
           </span>
 
-          {/* Industry */}
           <FilterGroup
             label="INDUSTRY"
             options={industryFilters}
             active={activeIndustry}
-            onToggle={(v) => toggleFilter(activeIndustry, setActiveIndustry, v)}
+            onToggle={(v) => { toggleFilter(activeIndustry, setActiveIndustry, v); setCurrentPage(1) }}
           />
 
-          {/* Experience */}
           <FilterGroup
             label="EXPERIENCE LEVEL"
             options={experienceFilters}
             active={activeExp}
-            onToggle={(v) => toggleFilter(activeExp, setActiveExp, v)}
+            onToggle={(v) => { toggleFilter(activeExp, setActiveExp, v); setCurrentPage(1) }}
           />
         </aside>
 
@@ -54,13 +68,11 @@ export default function BrowsePage() {
                 Browse Templates
               </h1>
               <span className="text-text-secondary text-sm">
-                Showing {templates.length * 4} templates
+                {loading ? 'Loading…' : `Showing ${filtered.length} template${filtered.length !== 1 ? 's' : ''}`}
               </span>
             </div>
             <div className="flex items-center gap-2 px-3 py-2 bg-bg-card border border-border-default rounded-md">
-              <span className="text-text-secondary text-[13px]">
-                Sort: Most Popular
-              </span>
+              <span className="text-text-secondary text-[13px]">Sort: Most Popular</span>
               <span className="text-text-secondary text-[10px]">▾</span>
             </div>
           </div>
@@ -68,15 +80,14 @@ export default function BrowsePage() {
           {/* Active filter pills */}
           {activeFilters.length > 0 && (
             <div className="flex gap-2 items-center flex-wrap">
-              <span className="text-text-muted text-[13px]">
-                Active:
-              </span>
+              <span className="text-text-muted text-[13px]">Active:</span>
               {activeFilters.map((filter) => (
                 <button
                   key={filter}
                   onClick={() => {
                     if (activeIndustry.includes(filter)) toggleFilter(activeIndustry, setActiveIndustry, filter)
                     else toggleFilter(activeExp, setActiveExp, filter)
+                    setCurrentPage(1)
                   }}
                   className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#FF5C0015] border border-[#FF5C0040] rounded-full text-accent text-xs cursor-pointer"
                 >
@@ -87,38 +98,66 @@ export default function BrowsePage() {
           )}
 
           {/* Card grid */}
-          <div className="grid grid-cols-3 gap-4">
-            {templates.map((t) => (
-              <TemplateCard key={t.id} {...t} />
-            ))}
-          </div>
+          {loading ? (
+            <div className="grid grid-cols-3 gap-4">
+              {Array.from({ length: 9 }).map((_, i) => (
+                <div key={i} className="bg-bg-card border border-border-default rounded-xl overflow-hidden animate-pulse">
+                  <div className="h-[220px] bg-[#1F1F23]" />
+                  <div className="p-4 flex flex-col gap-2">
+                    <div className="h-4 bg-[#1F1F23] rounded w-3/4" />
+                    <div className="h-3 bg-[#1F1F23] rounded w-1/2" />
+                    <div className="h-3 bg-[#1F1F23] rounded w-full mt-1" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : paginated.length === 0 ? (
+            <div className="flex-1 flex flex-col items-center justify-center gap-3 py-20">
+              <span className="text-text-secondary text-lg">No templates match your filters</span>
+              <button
+                onClick={() => { setActiveIndustry([]); setActiveExp([]); setCurrentPage(1) }}
+                className="text-accent text-sm underline cursor-pointer bg-transparent border-none"
+              >
+                Clear filters
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-3 gap-4">
+              {paginated.map((t) => (
+                <TemplateCard key={t.id} {...t} />
+              ))}
+            </div>
+          )}
 
           {/* Pagination */}
-          <div className="flex justify-center gap-1 pt-2">
-            {['←', '1', '2', '3', '→'].map((label, i) => {
-              const isActive = label === String(currentPage)
-              return (
-                <button
-                  key={label + i}
-                  onClick={() => {
-                    if (label === '←' && currentPage > 1) setCurrentPage(currentPage - 1)
-                    else if (label === '→') setCurrentPage(currentPage + 1)
-                    else if (!isNaN(Number(label))) setCurrentPage(Number(label))
-                  }}
-                  className={`px-3 py-2 rounded-md text-sm cursor-pointer transition-colors ${
-                    isActive
-                      ? 'bg-accent border border-transparent text-text-primary font-semibold'
-                      : 'bg-bg-card border border-border-default text-text-secondary font-normal'
-                  }`}
-                >
-                  {label}
-                </button>
-              )
-            })}
-          </div>
+          {!loading && totalPages > 1 && (
+            <div className="flex justify-center gap-1 pt-2">
+              <PaginationBtn label="←" disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)} active={false} />
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <PaginationBtn key={page} label={String(page)} active={page === currentPage} onClick={() => setCurrentPage(page)} />
+              ))}
+              <PaginationBtn label="→" disabled={currentPage === totalPages} onClick={() => setCurrentPage(p => p + 1)} active={false} />
+            </div>
+          )}
         </main>
       </div>
     </div>
+  )
+}
+
+function PaginationBtn({ label, active, disabled, onClick }: { label: string; active: boolean; disabled?: boolean; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className={`px-3 py-2 rounded-md text-sm cursor-pointer transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
+        active
+          ? 'bg-accent border border-transparent text-white font-semibold'
+          : 'bg-bg-card border border-border-default text-text-secondary font-normal'
+      }`}
+    >
+      {label}
+    </button>
   )
 }
 
@@ -139,19 +178,14 @@ function FilterGroup({
         {label}
       </span>
       {options.map((option) => (
-        <label
-          key={option}
-          className="flex items-center gap-2.5 cursor-pointer"
-        >
+        <label key={option} className="flex items-center gap-2.5 cursor-pointer">
           <span
             onClick={() => onToggle(option)}
             className={`w-4 h-4 rounded-[3px] border-[1.5px] border-border-default flex-shrink-0 inline-block cursor-pointer transition-colors ${
               active.includes(option) ? 'bg-accent' : 'bg-bg-card'
             }`}
           />
-          <span className="text-text-secondary text-sm">
-            {option}
-          </span>
+          <span className="text-text-secondary text-sm">{option}</span>
         </label>
       ))}
     </div>
