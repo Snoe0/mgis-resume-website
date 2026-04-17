@@ -13,6 +13,11 @@ const companyLinks = [
   { label: 'Contact', href: '/contact' },
 ]
 
+const legalLinks = [
+  { label: 'Terms of Service', href: '/terms' },
+  { label: 'Privacy Policy', href: '/privacy' },
+]
+
 export default function Footer() {
   return (
     <footer className="bg-bg-elevated border-t border-border-default py-12 px-[80px]">
@@ -48,6 +53,20 @@ export default function Footer() {
               Company
             </span>
             {companyLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-text-secondary text-[13px] no-underline transition-colors duration-150 hover:text-text-primary"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
+          <div className="flex flex-col gap-3">
+            <span className="text-text-primary text-[13px] font-semibold">
+              Legal
+            </span>
+            {legalLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
