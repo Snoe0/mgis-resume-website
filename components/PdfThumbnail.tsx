@@ -4,12 +4,13 @@ import { useEffect, useRef, useState } from 'react'
 
 interface PdfThumbnailProps {
   url: string
-  /** Height of the rendered canvas in px. Width scales proportionally. */
+  /** Visible height of the thumbnail in px — the PDF is scaled to fill the width and clipped at this height. */
   height?: number
   className?: string
 }
 
 export default function PdfThumbnail({ url, height = 220, className = '' }: PdfThumbnailProps) {
+  const containerRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
@@ -21,7 +22,8 @@ export default function PdfThumbnail({ url, height = 220, className = '' }: PdfT
     async function render() {
       try {
         const pdfjsLib = await import('pdfjs-dist')
-        pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`
+        pdfjsLib.GlobalWorkerOptions.workerSrc =
+          `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`
 
         const pdf = await pdfjsLib.getDocument({ url, withCredentials: false }).promise
         if (cancelled) return
@@ -30,18 +32,23 @@ export default function PdfThumbnail({ url, height = 220, className = '' }: PdfT
         if (cancelled) return
 
         const canvas = canvasRef.current
-        if (!canvas) return
+        const container = containerRef.current
+        if (!canvas || !container) return
 
-        // Render at 3× resolution then scale down with CSS for sharp text
+        // Scale to fill the container width at 3× for crisp text
         const dpr = 3
+        const containerWidth = container.clientWidth || 400
         const unscaled = page.getViewport({ scale: 1 })
-        const scale = (height / unscaled.height) * dpr
+        const scale = (containerWidth / unscaled.width) * dpr
         const viewport = page.getViewport({ scale })
 
-        canvas.height = viewport.height
+        // Internal canvas dimensions are 3× display size
         canvas.width = viewport.width
-        canvas.style.width = `${viewport.width / dpr}px`
-        canvas.style.height = `${height}px`
+        canvas.height = viewport.height
+
+        // CSS size equals the actual display size
+        canvas.style.width = `${containerWidth}px`
+        canvas.style.height = `${viewport.height / dpr}px`
 
         await page.render({
           canvasContext: canvas.getContext('2d')!,
@@ -60,8 +67,12 @@ export default function PdfThumbnail({ url, height = 220, className = '' }: PdfT
   }, [url, height])
 
   return (
-    <div className={`relative overflow-hidden ${className}`} style={{ height }}>
-      {/* Skeleton shown while loading */}
+    <div
+      ref={containerRef}
+      className={`relative overflow-hidden ${className}`}
+      style={{ height }}
+    >
+      {/* Skeleton */}
       {loading && (
         <div className="absolute inset-0 bg-[#1A1A1E] animate-pulse flex flex-col gap-3 p-6">
           <div className="h-3 bg-[#2A2A2E] rounded w-2/5" />
@@ -86,10 +97,10 @@ export default function PdfThumbnail({ url, height = 220, className = '' }: PdfT
         </div>
       )}
 
-      {/* The actual rendered canvas */}
+      {/* Canvas — fills container width, top of PDF visible, clipped at height */}
       <canvas
         ref={canvasRef}
-        style={{ display: loading || error ? 'none' : 'block', maxWidth: '100%' }}
+        style={{ display: loading || error ? 'none' : 'block' }}
       />
     </div>
   )
