@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useState } from 'react'
 import { Menu, X } from 'lucide-react'
 import { useAuth } from '@/components/AuthProvider'
@@ -16,62 +17,32 @@ export default function Header() {
   const { user, signOut } = useAuth()
 
   return (
-    <header
-      style={{
-        position: 'sticky',
-        top: 0,
-        zIndex: 50,
-        backgroundColor: '#111113',
-        borderBottom: '1px solid #1F1F23',
-      }}
-    >
-      <div
-        style={{
-          maxWidth: '1280px',
-          margin: '0 auto',
-          padding: '0 80px',
-          height: '64px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
-      >
+    <header className="sticky top-0 z-50 bg-bg-elevated border-b border-border-default">
+      <div className="container-page h-16 flex items-center justify-between">
         {/* Logo */}
         <Link
           href="/"
-          style={{
-            fontFamily: 'var(--font-instrument-serif), Georgia, serif',
-            fontSize: '20px',
-            color: '#FFFFFF',
-            textDecoration: 'none',
-            fontWeight: '400',
-          }}
+          aria-label="ResumeForge home"
+          className="flex items-center gap-[10px] font-serif text-[20px] text-text-primary font-normal no-underline"
         >
+          <Image
+            src="/logo.png"
+            alt="ResumeForge logo"
+            width={32}
+            height={32}
+            priority
+            className="w-8 h-8 object-contain"
+          />
           ResumeForge
         </Link>
 
         {/* Desktop nav */}
-        <nav
-          style={{
-            display: 'flex',
-            gap: '32px',
-            alignItems: 'center',
-          }}
-          className="hidden md:flex"
-        >
+        <nav className="hidden md:flex gap-[32px] items-center">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              style={{
-                color: '#8B8B90',
-                fontSize: '14px',
-                textDecoration: 'none',
-                transition: 'color 0.15s',
-                fontFamily: 'var(--font-inter), Inter, sans-serif',
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = '#FFFFFF')}
-              onMouseLeave={(e) => (e.currentTarget.style.color = '#8B8B90')}
+              className="text-text-secondary text-sm no-underline transition-colors duration-150 hover:text-text-primary"
             >
               {link.label}
             </Link>
@@ -79,33 +50,15 @@ export default function Header() {
         </nav>
 
         {/* CTA */}
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+        <div className="flex gap-3 items-center">
           {user && (
             <>
-              <span
-                style={{
-                  color: '#8B8B90',
-                  fontSize: '13px',
-                  fontFamily: 'var(--font-inter), Inter, sans-serif',
-                }}
-                className="hidden sm:inline"
-              >
+              <span className="hidden sm:inline text-text-secondary text-[13px]">
                 {user.email}
               </span>
               <button
                 onClick={() => signOut()}
-                style={{
-                  color: '#8B8B90',
-                  fontSize: '13px',
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontFamily: 'var(--font-inter), Inter, sans-serif',
-                  transition: 'color 0.15s',
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = '#FFFFFF')}
-                onMouseLeave={(e) => (e.currentTarget.style.color = '#8B8B90')}
-                className="hidden sm:inline"
+                className="hidden sm:inline text-text-secondary text-[13px] bg-transparent border-0 cursor-pointer transition-colors duration-150 hover:text-text-primary"
               >
                 Sign Out
               </button>
@@ -113,20 +66,7 @@ export default function Header() {
           )}
           <Link
             href="/sell"
-            style={{
-              padding: '8px 16px',
-              backgroundColor: '#FF5C00',
-              color: '#FFFFFF',
-              borderRadius: '6px',
-              fontSize: '14px',
-              fontWeight: '600',
-              textDecoration: 'none',
-              fontFamily: 'var(--font-inter), Inter, sans-serif',
-              transition: 'background-color 0.15s',
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e05200')}
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#FF5C00')}
-            className="hidden sm:inline-flex"
+            className="hidden sm:inline-flex px-4 py-2 bg-accent text-text-primary rounded-md text-sm font-semibold no-underline transition-colors duration-150 hover:bg-accent-hover"
           >
             Sell Templates
           </Link>
@@ -134,8 +74,9 @@ export default function Header() {
           {/* Mobile hamburger */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            style={{ color: '#8B8B90', background: 'none', border: 'none', cursor: 'pointer' }}
-            className="md:hidden"
+            aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={mobileOpen}
+            className="md:hidden text-text-secondary bg-transparent border-0 cursor-pointer"
           >
             {mobileOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
@@ -144,48 +85,21 @@ export default function Header() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div
-          style={{
-            backgroundColor: '#111113',
-            borderTop: '1px solid #1F1F23',
-            padding: '16px 24px',
-          }}
-          className="md:hidden"
-        >
+        <div className="md:hidden bg-bg-elevated border-t border-border-default px-6 py-4">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              style={{
-                display: 'block',
-                color: '#8B8B90',
-                fontSize: '15px',
-                textDecoration: 'none',
-                padding: '10px 0',
-                borderBottom: '1px solid #1F1F23',
-                fontFamily: 'var(--font-inter), Inter, sans-serif',
-              }}
               onClick={() => setMobileOpen(false)}
+              className="block text-text-secondary text-[15px] no-underline py-[10px] border-b border-border-default"
             >
               {link.label}
             </Link>
           ))}
           <Link
             href="/sell"
-            style={{
-              display: 'block',
-              marginTop: '12px',
-              padding: '10px 16px',
-              backgroundColor: '#FF5C00',
-              color: '#FFFFFF',
-              borderRadius: '6px',
-              fontSize: '14px',
-              fontWeight: '600',
-              textDecoration: 'none',
-              textAlign: 'center',
-              fontFamily: 'var(--font-inter), Inter, sans-serif',
-            }}
             onClick={() => setMobileOpen(false)}
+            className="block mt-3 px-4 py-[10px] bg-accent text-text-primary rounded-md text-sm font-semibold no-underline text-center"
           >
             Sell Templates
           </Link>

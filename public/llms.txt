@@ -1,0 +1,25 @@
+# ResumeForge
+
+> A resume template marketplace with a browser-based editor and AI-powered resume optimizer. Browse ATS-optimized templates, customize in the editor, and land your dream job.
+
+## Key pages
+
+- [Homepage](https://mgis-resume-website-sigma.vercel.app/): Landing page with featured templates, how-it-works, and FAQ
+- [Browse Templates](https://mgis-resume-website-sigma.vercel.app/browse): Filterable catalog of all resume templates by industry and experience level
+- [AI Optimizer](https://mgis-resume-website-sigma.vercel.app/optimizer): Upload a resume and a job description to get tailored rewrite suggestions, keyword gap analysis, and a cover letter draft
+
+## Templates
+
+Every template is tested against Workday, Greenhouse, and Lever to ensure ATS compatibility. Customers receive PDF and DOCX exports.
+
+## Key facts
+
+- 500+ templates available
+- Both free and paid templates (paid $18–$29)
+- Editor supports drag-and-drop section reordering, font/color customization, and real-time preview
+- AI Optimizer analyzes resumes for keyword match, impact, and missing skills against a target job description
+- Payments processed via Stripe; orders stored in Supabase
+
+## Contact
+
+Code repository: https://github.com/Snoe0/mgis-resume-website

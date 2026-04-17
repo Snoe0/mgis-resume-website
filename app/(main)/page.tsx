@@ -1,308 +1,180 @@
-'use client'
-
 import Link from 'next/link'
-import { useState } from 'react'
-import { motion, type Variants } from 'framer-motion'
 import { ArrowRight, FileText, Zap, TrendingUp } from 'lucide-react'
 import TemplateCard from '@/components/TemplateCard'
 import { templates as featuredTemplates } from '@/lib/templates'
+import HomeFAQ, { type FAQItem } from './_components/HomeFAQ'
 
-const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' as const } },
+const faqs: FAQItem[] = [
+  {
+    q: 'Are the templates ATS-compatible?',
+    a: 'Yes. Every template is tested against major ATS platforms including Workday, Greenhouse, and Lever. Clean formatting and standard section headings ensure your resume is parsed correctly.',
+  },
+  {
+    q: 'Can I edit the template after purchase?',
+    a: 'Absolutely. All templates are fully editable in our browser-based editor. You can change fonts, colors, section order, and content without any design software.',
+  },
+  {
+    q: 'What file formats do I get?',
+    a: 'You receive PDF (for applications) and DOCX (for further editing in Word or Google Docs). Both are included in every purchase.',
+  },
+  {
+    q: 'Is there a free option?',
+    a: 'Yes. Several templates are permanently free. Filter by "Free" on the Browse page to see all available free templates.',
+  },
+  {
+    q: 'How does the AI Reviewer work?',
+    a: 'Upload your resume and our AI analyzes it for ATS compatibility, clarity, impact, and missing sections. You receive an overall score and specific suggestions with before/after examples.',
+  },
+]
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.q,
+    acceptedAnswer: { '@type': 'Answer', text: faq.a },
+  })),
 }
 
-const staggerContainer: Variants = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.08 } },
+const howToJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  name: 'How to create a professional resume with ResumeForge',
+  description: 'Three simple steps from template selection to download.',
+  step: [
+    {
+      '@type': 'HowToStep',
+      position: 1,
+      name: 'Choose Your Template',
+      text: 'Browse our curated collection and pick a design that matches your style and industry.',
+    },
+    {
+      '@type': 'HowToStep',
+      position: 2,
+      name: 'Customize & Edit',
+      text: 'Use our intuitive editor to personalize your resume with your information and experience.',
+    },
+    {
+      '@type': 'HowToStep',
+      position: 3,
+      name: 'Download & Apply',
+      text: 'Export your polished resume and start applying to your dream jobs with confidence.',
+    },
+  ],
 }
 
+/**
+ * Homepage is a pure server component:
+ * - No 'use client', no useState, no framer-motion.
+ * - All hover effects are pure Tailwind hover: utilities.
+ * - FAQ uses native <details>/<summary> (see ./_components/HomeFAQ.tsx).
+ * - JSON-LD (FAQPage + HowTo) preserved.
+ */
 export default function HomePage() {
-  const [openIndex, setOpenIndex] = useState<number | null>(null)
-
-  const faqs = [
-    {
-      q: 'Are the templates ATS-compatible?',
-      a: 'Yes. Every template is tested against major ATS platforms including Workday, Greenhouse, and Lever. Clean formatting and standard section headings ensure your resume is parsed correctly.',
-    },
-    {
-      q: 'Can I edit the template after purchase?',
-      a: 'Absolutely. All templates are fully editable in our browser-based editor. You can change fonts, colors, section order, and content without any design software.',
-    },
-    {
-      q: 'What file formats do I get?',
-      a: 'You receive PDF (for applications) and DOCX (for further editing in Word or Google Docs). Both are included in every purchase.',
-    },
-    {
-      q: 'Is there a free option?',
-      a: 'Yes. Several templates are permanently free. Filter by "Free" on the Browse page to see all available free templates.',
-    },
-    {
-      q: 'How does the AI Reviewer work?',
-      a: 'Upload your resume and our AI analyzes it for ATS compatibility, clarity, impact, and missing sections. You receive an overall score and specific suggestions with before/after examples.',
-    },
-  ]
-
   return (
-    <div style={{ backgroundColor: '#0A0A0B', minHeight: '100vh' }}>
+    <div className="bg-bg-base min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(howToJsonLd) }}
+      />
 
-      {/* ── Hero ── */}
-      <section
-        style={{
-          padding: '120px 80px 100px',
-          textAlign: 'center',
-          maxWidth: '1280px',
-          margin: '0 auto',
-        }}
-      >
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={staggerContainer}
-          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}
-        >
+      {/* Hero */}
+      <section className="container-page pt-[120px] pb-[100px] text-center">
+        <div className="flex flex-col items-center gap-[24px]">
           {/* Badge */}
-          <motion.div variants={fadeUp}>
-            <span
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '6px 16px',
-                backgroundColor: '#FF5C0015',
-                border: '1px solid #FF5C0040',
-                borderRadius: '100px',
-                color: '#FF5C00',
-                fontSize: '13px',
-                fontFamily: 'var(--font-inter), Inter, sans-serif',
-                fontWeight: '500',
-              }}
-            >
+          <div>
+            <span className="inline-flex items-center gap-[8px] px-[16px] py-[6px] bg-[#FF5C0015] border border-[#FF5C0040] rounded-[100px] text-accent text-[13px] font-medium">
               ✦ Over 10,000 professionals hired
             </span>
-          </motion.div>
+          </div>
 
           {/* H1 */}
-          <motion.h1
-            variants={fadeUp}
-            style={{
-              fontFamily: 'var(--font-instrument-serif), Georgia, serif',
-              fontSize: 'clamp(40px, 6vw, 64px)',
-              color: '#FFFFFF',
-              fontWeight: '400',
-              lineHeight: '1.1',
-              maxWidth: '800px',
-              margin: '0',
-            }}
-          >
+          <h1 className="font-serif text-[clamp(40px,6vw,64px)] text-text-primary font-normal leading-[1.1] max-w-[800px] m-0">
             Stand Out With a Resume That Gets You Hired
-          </motion.h1>
+          </h1>
 
           {/* Subtext */}
-          <motion.p
-            variants={fadeUp}
-            style={{
-              color: '#8B8B90',
-              fontSize: '18px',
-              lineHeight: '1.6',
-              maxWidth: '560px',
-              margin: '0',
-              fontFamily: 'var(--font-inter), Inter, sans-serif',
-            }}
-          >
+          <p className="text-text-secondary text-[18px] leading-[1.6] max-w-[560px] m-0">
             Choose from hundreds of professionally designed templates.
             Customize in our editor, review with AI, and land your dream job.
-          </motion.p>
+          </p>
 
           {/* CTAs */}
-          <motion.div
-            variants={fadeUp}
-            style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}
-          >
+          <div className="flex gap-[12px] flex-wrap justify-center">
             <Link
               href="/browse"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '12px 24px',
-                backgroundColor: '#FF5C00',
-                color: '#FFFFFF',
-                borderRadius: '8px',
-                fontSize: '15px',
-                fontWeight: '600',
-                textDecoration: 'none',
-                fontFamily: 'var(--font-inter), Inter, sans-serif',
-                transition: 'background-color 0.15s',
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e05200')}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#FF5C00')}
+              className="inline-flex items-center gap-[8px] px-[24px] py-[12px] bg-accent hover:bg-accent-hover transition-colors text-text-primary rounded-[8px] text-[15px] font-semibold no-underline"
             >
               Browse Templates <ArrowRight size={16} />
             </Link>
             <Link
               href="/browse?filter=free"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                padding: '12px 24px',
-                backgroundColor: 'transparent',
-                color: '#FFFFFF',
-                border: '1px solid #1F1F23',
-                borderRadius: '8px',
-                fontSize: '15px',
-                fontWeight: '500',
-                textDecoration: 'none',
-                fontFamily: 'var(--font-inter), Inter, sans-serif',
-                transition: 'border-color 0.15s',
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#8B8B90')}
-              onMouseLeave={(e) => (e.currentTarget.style.borderColor = '#1F1F23')}
+              className="inline-flex items-center px-[24px] py-[12px] bg-transparent text-text-primary border border-border-default hover:border-text-secondary transition-colors rounded-[8px] text-[15px] font-medium no-underline"
             >
               Start Free
             </Link>
-          </motion.div>
+          </div>
 
           {/* Trust badges */}
-          <motion.div
-            variants={fadeUp}
-            style={{
-              display: 'flex',
-              gap: '32px',
-              flexWrap: 'wrap',
-              justifyContent: 'center',
-              marginTop: '8px',
-            }}
-          >
+          <div className="flex gap-[32px] flex-wrap justify-center mt-[8px]">
             {['ATS-Friendly', 'Easy Customization', 'Instant Download'].map((badge) => (
               <span
                 key={badge}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  color: '#8B8B90',
-                  fontSize: '13px',
-                  fontFamily: 'var(--font-inter), Inter, sans-serif',
-                }}
+                className="flex items-center gap-[8px] text-text-secondary text-[13px]"
               >
-                <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#10B981', flexShrink: 0 }} />
+                <span className="w-[6px] h-[6px] rounded-full bg-success shrink-0" />
                 {badge}
               </span>
             ))}
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </section>
 
-      {/* ── Featured Templates ── */}
-      <motion.section
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: '-100px' }}
-        variants={fadeUp}
-        style={{
-          padding: '80px 80px',
-          maxWidth: '1280px',
-          margin: '0 auto',
-        }}
-      >
-        <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-          <h2
-            style={{
-              fontFamily: 'var(--font-instrument-serif), Georgia, serif',
-              fontSize: '36px',
-              color: '#FFFFFF',
-              fontWeight: '400',
-              margin: '0 0 12px',
-            }}
-          >
+      {/* Featured Templates */}
+      <section className="container-page py-[80px]">
+        <div className="text-center mb-[48px]">
+          <h2 className="font-serif text-[36px] text-text-primary font-normal mt-0 mb-[12px]">
             Featured Templates
           </h2>
-          <p style={{ color: '#8B8B90', fontSize: '16px', margin: '0', fontFamily: 'var(--font-inter), Inter, sans-serif' }}>
+          <p className="text-text-secondary text-[16px] m-0">
             Handpicked by our design team. Used by thousands to land great jobs.
           </p>
         </div>
 
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-80px' }}
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: '16px',
-          }}
-        >
+        <div className="grid grid-cols-3 gap-[16px]">
           {featuredTemplates.map((template) => (
-            <motion.div key={template.id} variants={fadeUp}>
-              <TemplateCard {...template} />
-            </motion.div>
+            <TemplateCard key={template.id} {...template} />
           ))}
-        </motion.div>
+        </div>
 
-        <div style={{ textAlign: 'center', marginTop: '40px' }}>
+        <div className="text-center mt-[40px]">
           <Link
             href="/browse"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '10px 24px',
-              border: '1px solid #1F1F23',
-              borderRadius: '8px',
-              color: '#FFFFFF',
-              fontSize: '14px',
-              textDecoration: 'none',
-              fontFamily: 'var(--font-inter), Inter, sans-serif',
-              transition: 'border-color 0.15s',
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#8B8B90')}
-            onMouseLeave={(e) => (e.currentTarget.style.borderColor = '#1F1F23')}
+            className="inline-flex items-center gap-[8px] px-[24px] py-[10px] border border-border-default hover:border-text-secondary transition-colors rounded-[8px] text-text-primary text-[14px] no-underline"
           >
             View All Templates <ArrowRight size={14} />
           </Link>
         </div>
-      </motion.section>
+      </section>
 
-      {/* ── How It Works ── */}
-      <motion.section
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: '-100px' }}
-        variants={fadeUp}
-        style={{
-          padding: '80px',
-          backgroundColor: '#111113',
-          borderTop: '1px solid #1F1F23',
-          borderBottom: '1px solid #1F1F23',
-        }}
-      >
-        <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: '56px' }}>
-            <h2
-              style={{
-                fontFamily: 'var(--font-instrument-serif), Georgia, serif',
-                fontSize: '36px',
-                color: '#FFFFFF',
-                fontWeight: '400',
-                margin: '0 0 12px',
-              }}
-            >
+      {/* How It Works */}
+      <section className="p-[80px] bg-bg-elevated border-t border-b border-border-default">
+        <div className="max-w-[1280px] mx-auto">
+          <div className="text-center mb-[56px]">
+            <h2 className="font-serif text-[36px] text-text-primary font-normal mt-0 mb-[12px]">
               How It Works
             </h2>
-            <p style={{ color: '#8B8B90', fontSize: '16px', margin: '0', fontFamily: 'var(--font-inter), Inter, sans-serif' }}>
+            <p className="text-text-secondary text-[16px] m-0">
               Three simple steps to your perfect resume
             </p>
           </div>
 
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-80px' }}
-            style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }}
-          >
+          <div className="grid grid-cols-3 gap-[24px]">
             {[
               {
                 step: '01',
@@ -323,261 +195,89 @@ export default function HomePage() {
                 desc: 'Export your polished resume and start applying to your dream jobs with confidence.',
               },
             ].map(({ step, icon, title, desc }) => (
-              <motion.div
+              <div
                 key={step}
-                variants={fadeUp}
-                style={{
-                  backgroundColor: '#141417',
-                  border: '1px solid #1F1F23',
-                  borderRadius: '12px',
-                  padding: '32px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '16px',
-                }}
+                className="bg-bg-card border border-border-default rounded-[12px] p-[32px] flex flex-col gap-[16px]"
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div className="flex justify-between items-start">
                   {icon}
-                  <span
-                    style={{
-                      color: '#FF5C00',
-                      fontSize: '12px',
-                      fontWeight: '700',
-                      fontFamily: 'var(--font-inter), Inter, sans-serif',
-                      letterSpacing: '1px',
-                    }}
-                  >
+                  <span className="text-accent text-[12px] font-bold tracking-[1px]">
                     {step}
                   </span>
                 </div>
-                <h3
-                  style={{
-                    color: '#FFFFFF',
-                    fontSize: '17px',
-                    fontWeight: '600',
-                    margin: '0',
-                    fontFamily: 'var(--font-inter), Inter, sans-serif',
-                  }}
-                >
+                <h3 className="text-text-primary text-[17px] font-semibold m-0">
                   {title}
                 </h3>
-                <p
-                  style={{
-                    color: '#8B8B90',
-                    fontSize: '14px',
-                    lineHeight: '1.6',
-                    margin: '0',
-                    fontFamily: 'var(--font-inter), Inter, sans-serif',
-                  }}
-                >
+                <p className="text-text-secondary text-[14px] leading-[1.6] m-0">
                   {desc}
                 </p>
-              </motion.div>
+              </div>
             ))}
-          </motion.div>
+          </div>
         </div>
-      </motion.section>
+      </section>
 
-      {/* ── Creator CTA ── */}
-      <motion.section
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: '-100px' }}
-        variants={fadeUp}
-        style={{
-          padding: '80px',
-          background: 'linear-gradient(135deg, #111113 0%, #1a1012 100%)',
-          borderBottom: '1px solid #1F1F23',
-        }}
+      {/* Creator CTA */}
+      <section
+        className="p-[80px] border-b border-border-default"
+        style={{ background: 'linear-gradient(135deg, #111113 0%, #1a1012 100%)' }}
       >
-        <div style={{ maxWidth: '1280px', margin: '0 auto', textAlign: 'center' }}>
-          <h2
-            style={{
-              fontFamily: 'var(--font-instrument-serif), Georgia, serif',
-              fontSize: '40px',
-              color: '#FFFFFF',
-              fontWeight: '400',
-              margin: '0 0 16px',
-            }}
-          >
+        <div className="max-w-[1280px] mx-auto text-center">
+          <h2 className="font-serif text-[40px] text-text-primary font-normal mt-0 mb-[16px]">
             Are You a Designer?
           </h2>
-          <p
-            style={{
-              color: '#8B8B90',
-              fontSize: '17px',
-              lineHeight: '1.6',
-              maxWidth: '520px',
-              margin: '0 auto 32px',
-              fontFamily: 'var(--font-inter), Inter, sans-serif',
-            }}
-          >
+          <p className="text-text-secondary text-[17px] leading-[1.6] max-w-[520px] mx-auto mt-0 mb-[32px]">
             Join our creator community and earn money by selling your resume
             templates to thousands of professionals.
           </p>
 
-          <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginBottom: '64px' }}>
+          <div className="flex gap-[12px] justify-center mb-[64px]">
             <Link
               href="/sell"
-              style={{
-                padding: '12px 28px',
-                backgroundColor: '#FF5C00',
-                color: '#FFFFFF',
-                borderRadius: '8px',
-                fontSize: '15px',
-                fontWeight: '600',
-                textDecoration: 'none',
-                fontFamily: 'var(--font-inter), Inter, sans-serif',
-                transition: 'background-color 0.15s',
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e05200')}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#FF5C00')}
+              className="px-[28px] py-[12px] bg-accent hover:bg-accent-hover transition-colors text-text-primary rounded-[8px] text-[15px] font-semibold no-underline"
             >
               Become a Creator
             </Link>
             <Link
-              href="/about"
-              style={{
-                padding: '12px 28px',
-                backgroundColor: 'transparent',
-                color: '#FFFFFF',
-                border: '1px solid #1F1F23',
-                borderRadius: '8px',
-                fontSize: '15px',
-                fontWeight: '500',
-                textDecoration: 'none',
-                fontFamily: 'var(--font-inter), Inter, sans-serif',
-                transition: 'border-color 0.15s',
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#8B8B90')}
-              onMouseLeave={(e) => (e.currentTarget.style.borderColor = '#1F1F23')}
+              href="/browse"
+              className="px-[28px] py-[12px] bg-transparent text-text-primary border border-border-default hover:border-text-secondary transition-colors rounded-[8px] text-[15px] font-medium no-underline"
             >
-              Learn More
+              Browse Templates
             </Link>
           </div>
 
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0', maxWidth: '600px', margin: '0 auto' }}
-          >
+          <div className="grid grid-cols-3 gap-0 max-w-[600px] mx-auto">
             {[
               { num: '10K+', label: 'Active Users' },
               { num: '500+', label: 'Templates' },
               { num: '$2M+', label: 'Paid to Creators' },
-            ].map(({ num, label }) => (
-              <motion.div
+            ].map(({ num, label }, i, arr) => (
+              <div
                 key={label}
-                variants={fadeUp}
-                style={{ textAlign: 'center', padding: '0 24px', borderRight: '1px solid #1F1F23' }}
+                className={`text-center px-[24px] ${i < arr.length - 1 ? 'border-r border-border-default' : ''}`}
               >
-                <div
-                  style={{
-                    fontFamily: 'var(--font-instrument-serif), Georgia, serif',
-                    fontSize: '40px',
-                    color: '#FFFFFF',
-                    lineHeight: '1',
-                    marginBottom: '8px',
-                  }}
-                >
+                <div className="font-serif text-[40px] text-text-primary leading-none mb-[8px]">
                   {num}
                 </div>
-                <div style={{ color: '#8B8B90', fontSize: '13px', fontFamily: 'var(--font-inter), Inter, sans-serif' }}>
+                <div className="text-text-secondary text-[13px]">
                   {label}
                 </div>
-              </motion.div>
+              </div>
             ))}
-          </motion.div>
+          </div>
         </div>
-      </motion.section>
+      </section>
 
-      {/* ── FAQ ── */}
-      <motion.section
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: '-100px' }}
-        variants={fadeUp}
-        style={{ padding: '80px', maxWidth: '1280px', margin: '0 auto' }}
-      >
-        <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-          <h2
-            style={{
-              fontFamily: 'var(--font-instrument-serif), Georgia, serif',
-              fontSize: '36px',
-              color: '#FFFFFF',
-              fontWeight: '400',
-              margin: '0 0 12px',
-            }}
-          >
+      {/* FAQ */}
+      <section className="container-page p-[80px]">
+        <div className="text-center mb-[48px]">
+          <h2 className="font-serif text-[36px] text-text-primary font-normal mt-0 mb-[12px]">
             Frequently Asked Questions
           </h2>
         </div>
 
-        <div style={{ maxWidth: '720px', margin: '0 auto' }}>
-          {faqs.map((faq, i) => (
-            <div
-              key={i}
-              style={{ borderBottom: '1px solid #1F1F23' }}
-            >
-              <button
-                onClick={() => setOpenIndex(openIndex === i ? null : i)}
-                style={{
-                  width: '100%',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  padding: '20px 0',
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  textAlign: 'left',
-                  gap: '16px',
-                }}
-              >
-                <span
-                  style={{
-                    color: '#FFFFFF',
-                    fontSize: '15px',
-                    fontWeight: '500',
-                    fontFamily: 'var(--font-inter), Inter, sans-serif',
-                  }}
-                >
-                  {faq.q}
-                </span>
-                <span
-                  style={{
-                    color: '#FF5C00',
-                    fontSize: '20px',
-                    flexShrink: 0,
-                    transition: 'transform 0.2s',
-                    transform: openIndex === i ? 'rotate(45deg)' : 'rotate(0)',
-                    display: 'inline-block',
-                  }}
-                >
-                  +
-                </span>
-              </button>
-              {openIndex === i && (
-                <p
-                  style={{
-                    color: '#8B8B90',
-                    fontSize: '14px',
-                    lineHeight: '1.7',
-                    paddingBottom: '20px',
-                    margin: '0',
-                    fontFamily: 'var(--font-inter), Inter, sans-serif',
-                  }}
-                >
-                  {faq.a}
-                </p>
-              )}
-            </div>
-          ))}
-        </div>
-      </motion.section>
-
+        <HomeFAQ faqs={faqs} />
+      </section>
     </div>
   )
 }

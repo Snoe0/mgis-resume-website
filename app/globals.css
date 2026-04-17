@@ -1,20 +1,23 @@
 @import "tailwindcss";
 
 @theme {
-  --font-family-sans: 'Inter', system-ui, sans-serif;
-  --font-family-serif: 'Instrument Serif', Georgia, serif;
+  --font-family-sans: var(--font-inter), 'Inter', system-ui, sans-serif;
+  --font-family-serif: var(--font-instrument-serif), 'Instrument Serif', Georgia, serif;
 
   --color-bg-base: #0A0A0B;
   --color-bg-elevated: #111113;
   --color-bg-card: #141417;
   --color-border-default: #1F1F23;
   --color-accent: #FF5C00;
+  --color-accent-hover: #e05200;
   --color-accent-purple: #8B5CF6;
   --color-text-primary: #FFFFFF;
   --color-text-secondary: #8B8B90;
   --color-text-muted: #6B6B70;
   --color-success: #10B981;
   --color-warning: #FFC107;
+
+  --container-page: 1280px;
 }
 
 @layer base {
@@ -40,7 +43,34 @@
   }
 
   .font-serif {
-    font-family: 'Instrument Serif', Georgia, serif;
+    font-family: var(--font-instrument-serif), 'Instrument Serif', Georgia, serif;
+  }
+
+  .container-page {
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 80px;
+    padding-right: 80px;
+  }
+
+  @media (max-width: 768px) {
+    .container-page {
+      padding-left: 24px;
+      padding-right: 24px;
+    }
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
   }
 }
 

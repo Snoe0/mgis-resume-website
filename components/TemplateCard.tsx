@@ -1,111 +1,98 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 
 interface TemplateCardProps {
   id: string
+  slug?: string
   title: string
   creator: string
   price: number | 'free'
   rating: number
-  previewBg?: string
+  preview?: string
+  previewUrl?: string
+  tags?: string[]
+}
+
+function isPdf(url?: string): boolean {
+  return !!url && url.toLowerCase().endsWith('.pdf')
 }
 
 export default function TemplateCard({
   id,
+  slug,
   title,
   creator,
   price,
   rating,
-  previewBg = '#1A1A1D',
+  preview,
+  previewUrl,
+  tags,
 }: TemplateCardProps) {
   const stars = Math.round(rating)
+  const href = `/template/${slug ?? id}`
+  const previewSrc = preview ?? previewUrl
 
   return (
-    <Link
-      href={`/template/${id}`}
-      style={{ textDecoration: 'none' }}
-    >
-      <div
-        style={{
-          backgroundColor: '#141417',
-          border: '1px solid #1F1F23',
-          borderRadius: '12px',
-          overflow: 'hidden',
-          transition: 'border-color 0.2s, transform 0.2s',
-          cursor: 'pointer',
-        }}
-        onMouseEnter={(e) => {
-          const el = e.currentTarget
-          el.style.borderColor = '#FF5C00'
-          el.style.transform = 'translateY(-2px)'
-        }}
-        onMouseLeave={(e) => {
-          const el = e.currentTarget
-          el.style.borderColor = '#1F1F23'
-          el.style.transform = 'translateY(0)'
-        }}
-      >
-        {/* Preview image area */}
-        <div
-          style={{
-            height: '200px',
-            backgroundColor: previewBg,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          {/* Placeholder resume lines */}
-          <div style={{ opacity: 0.15, display: 'flex', flexDirection: 'column', gap: '8px', padding: '24px', width: '100%' }}>
-            <div style={{ height: '10px', backgroundColor: '#FFFFFF', borderRadius: '4px', width: '60%' }} />
-            <div style={{ height: '7px', backgroundColor: '#FFFFFF', borderRadius: '4px', width: '40%' }} />
-            <div style={{ height: '1px', backgroundColor: '#FF5C00', margin: '8px 0' }} />
-            <div style={{ height: '6px', backgroundColor: '#FFFFFF', borderRadius: '4px', width: '80%' }} />
-            <div style={{ height: '6px', backgroundColor: '#FFFFFF', borderRadius: '4px', width: '70%' }} />
-            <div style={{ height: '6px', backgroundColor: '#FFFFFF', borderRadius: '4px', width: '75%' }} />
-          </div>
+    <Link href={href} className="no-underline group">
+      <div className="bg-bg-card border border-border-default rounded-xl overflow-hidden transition-all duration-200 group-hover:border-accent group-hover:-translate-y-0.5 cursor-pointer">
+        {/* Preview area */}
+        <div className="relative h-[220px] bg-[#F8F8F5] flex items-center justify-center overflow-hidden">
+          {previewSrc && isPdf(previewSrc) ? (
+            <iframe
+              src={`${previewSrc}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
+              title={`${title} preview`}
+              className="w-full h-[220px] border-0 pointer-events-none"
+            />
+          ) : previewSrc ? (
+            <Image
+              src={previewSrc}
+              alt={`${title} resume template preview`}
+              width={400}
+              height={500}
+              className="w-full h-[220px] object-cover object-top"
+            />
+          ) : (
+            <div className="flex flex-col gap-2 p-6 w-full opacity-15">
+              <div className="h-2.5 bg-white rounded w-3/5" />
+              <div className="h-[7px] bg-white rounded w-2/5" />
+              <div className="h-px bg-accent my-2" />
+              <div className="h-1.5 bg-white rounded w-4/5" />
+              <div className="h-1.5 bg-white rounded w-[70%]" />
+              <div className="h-1.5 bg-white rounded w-3/4" />
+            </div>
+          )}
         </div>
 
         {/* Meta */}
-        <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <span
-            style={{
-              color: '#FFFFFF',
-              fontSize: '15px',
-              fontWeight: '600',
-              fontFamily: 'var(--font-inter), Inter, sans-serif',
-            }}
-          >
-            {title}
-          </span>
-          <span
-            style={{
-              color: '#8B8B90',
-              fontSize: '13px',
-              fontFamily: 'var(--font-inter), Inter, sans-serif',
-            }}
-          >
-            by {creator}
-          </span>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginTop: '4px',
-            }}
-          >
-            <span style={{ color: '#FF5C00', fontSize: '13px' }}>
-              {'★'.repeat(stars)}{'☆'.repeat(5 - stars)}&nbsp;&nbsp;{rating.toFixed(1)}
+        <div className="p-4 flex flex-col gap-2 font-sans">
+          <span className="text-text-primary text-[15px] font-semibold">{title}</span>
+          <span className="text-text-secondary text-[13px]">by {creator}</span>
+          {tags && tags.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 mt-0.5">
+              {tags.slice(0, 3).map((tag) => (
+                <span
+                  key={tag}
+                  className="px-2 py-0.5 bg-border-default rounded-full text-text-secondary text-[11px]"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+          <div className="flex justify-between items-center mt-1">
+            <span className="text-accent text-[13px]">
+              {'★'.repeat(stars)}
+              {'☆'.repeat(5 - stars)}
+              &nbsp;&nbsp;{rating.toFixed(1)}
             </span>
             <span
-              style={{
-                color: price === 'free' ? '#10B981' : '#FFFFFF',
-                fontSize: '15px',
-                fontWeight: '700',
-                fontFamily: 'var(--font-inter), Inter, sans-serif',
-              }}
+              className={
+                price === 'free'
+                  ? 'text-success text-[15px] font-bold'
+                  : 'text-text-primary text-[15px] font-bold'
+              }
             >
               {price === 'free' ? 'Free' : `$${price}`}
             </span>

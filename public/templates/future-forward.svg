@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" role="img" aria-label="Future Forward resume template preview">
+  <rect width="400" height="500" fill="#0A0A0B"/>
+  <polygon points="0,0 400,0 400,60 0,120" fill="#141417"/>
+  <polygon points="0,60 400,20 400,140 0,160" fill="#1F1F23"/>
+  <rect x="32" y="32" width="6" height="48" fill="#8B5CF6"/>
+  <text x="48" y="56" font-family="Arial, sans-serif" font-size="20" fill="#FFFFFF" font-weight="700">NINA PATEL</text>
+  <text x="48" y="76" font-family="Arial, sans-serif" font-size="10" fill="#8B5CF6" letter-spacing="3">SENIOR ENGINEER · TECH</text>
+  <text x="48" y="94" font-family="Arial, sans-serif" font-size="8" fill="#8B8B90">nina@future.io  ·  github.com/ninap  ·  San Francisco</text>
+  <text x="32" y="190" font-family="Arial, sans-serif" font-size="10" fill="#8B5CF6" letter-spacing="2" font-weight="700">// EXPERIENCE</text>
+  <rect x="32" y="202" width="336" height="1" fill="#8B5CF6"/>
+  <rect x="32" y="216" width="170" height="6" fill="#FFFFFF"/>
+  <rect x="32" y="230" width="110" height="4" fill="#8B8B90"/>
+  <rect x="32" y="244" width="336" height="3" fill="#3A3A40"/>
+  <rect x="32" y="252" width="310" height="3" fill="#3A3A40"/>
+  <rect x="32" y="260" width="260" height="3" fill="#3A3A40"/>
+  <rect x="32" y="284" width="160" height="6" fill="#FFFFFF"/>
+  <rect x="32" y="298" width="105" height="4" fill="#8B8B90"/>
+  <rect x="32" y="312" width="336" height="3" fill="#3A3A40"/>
+  <rect x="32" y="320" width="290" height="3" fill="#3A3A40"/>
+  <rect x="32" y="328" width="240" height="3" fill="#3A3A40"/>
+  <text x="32" y="372" font-family="Arial, sans-serif" font-size="10" fill="#8B5CF6" letter-spacing="2" font-weight="700">// STACK</text>
+  <rect x="32" y="384" width="336" height="1" fill="#8B5CF6"/>
+  <polygon points="32,400 72,400 80,408 72,416 32,416" fill="#1F1F23" stroke="#8B5CF6" stroke-width="1"/>
+  <polygon points="88,400 128,400 136,408 128,416 88,416" fill="#1F1F23" stroke="#8B5CF6" stroke-width="1"/>
+  <polygon points="144,400 184,400 192,408 184,416 144,416" fill="#1F1F23" stroke="#8B5CF6" stroke-width="1"/>
+  <polygon points="200,400 240,400 248,408 240,416 200,416" fill="#1F1F23" stroke="#8B5CF6" stroke-width="1"/>
+  <polygon points="32,428 72,428 80,436 72,444 32,444" fill="#1F1F23" stroke="#8B5CF6" stroke-width="1"/>
+  <polygon points="88,428 128,428 136,436 128,444 88,444" fill="#1F1F23" stroke="#8B5CF6" stroke-width="1"/>
+  <text x="32" y="468" font-family="Arial, sans-serif" font-size="10" fill="#8B5CF6" letter-spacing="2" font-weight="700">// EDUCATION</text>
+  <rect x="32" y="480" width="336" height="1" fill="#8B5CF6"/>
+  <rect x="32" y="488" width="180" height="5" fill="#FFFFFF"/>
+</svg>

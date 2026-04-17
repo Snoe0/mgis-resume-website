@@ -8,6 +8,9 @@ interface StepAccountProps {
   onNext: () => void
 }
 
+const INPUT_CLASS = 'w-full py-3 pr-4 pl-11 bg-bg-base border border-border-default rounded-lg text-text-primary text-sm outline-none'
+const ICON_WRAP_CLASS = 'absolute left-[14px] top-1/2 -translate-y-1/2 text-text-muted pointer-events-none'
+
 export default function StepAccount({ onNext }: StepAccountProps) {
   const { signUp, signIn } = useAuth()
   const [mode, setMode] = useState<'signin' | 'signup'>('signup')
@@ -51,91 +54,53 @@ export default function StepAccount({ onNext }: StepAccountProps) {
     }
   }
 
-  const inputStyle = {
-    width: '100%',
-    padding: '12px 16px 12px 44px',
-    backgroundColor: '#0A0A0B',
-    border: '1px solid #1F1F23',
-    borderRadius: '8px',
-    color: '#FFFFFF',
-    fontSize: '14px',
-    fontFamily: 'var(--font-inter), Inter, sans-serif',
-    outline: 'none',
-  } as const
-
-  const iconWrapStyle = {
-    position: 'absolute' as const,
-    left: '14px',
-    top: '50%',
-    transform: 'translateY(-50%)',
-    color: '#6B6B70',
-    pointerEvents: 'none' as const,
-  }
-
   return (
     <div>
-      <h2
-        style={{
-          fontFamily: 'var(--font-instrument-serif), Georgia, serif',
-          fontSize: '28px',
-          color: '#FFFFFF',
-          fontWeight: 400,
-          margin: '0 0 8px',
-        }}
-      >
+      <h2 className="font-serif text-[28px] text-text-primary font-normal m-0 mb-2">
         {mode === 'signup' ? 'Create your account' : 'Welcome back'}
       </h2>
-      <p style={{ color: '#8B8B90', fontSize: '14px', margin: '0 0 32px' }}>
+      <p className="text-text-secondary text-sm m-0 mb-8">
         {mode === 'signup'
           ? 'Sign up to start selling your resume templates.'
           : 'Sign in to continue your seller application.'}
       </p>
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         {/* Email */}
         <div>
-          <label style={{ color: '#8B8B90', fontSize: '13px', display: 'block', marginBottom: '8px', fontFamily: 'var(--font-inter), Inter, sans-serif' }}>
+          <label className="text-text-secondary text-[13px] block mb-2">
             Email address
           </label>
-          <div style={{ position: 'relative' }}>
-            <div style={iconWrapStyle}><Mail size={16} /></div>
+          <div className="relative">
+            <div className={ICON_WRAP_CLASS}><Mail size={16} /></div>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
-              style={inputStyle}
+              className={INPUT_CLASS}
             />
           </div>
         </div>
 
         {/* Password */}
         <div>
-          <label style={{ color: '#8B8B90', fontSize: '13px', display: 'block', marginBottom: '8px', fontFamily: 'var(--font-inter), Inter, sans-serif' }}>
+          <label className="text-text-secondary text-[13px] block mb-2">
             Password
           </label>
-          <div style={{ position: 'relative' }}>
-            <div style={iconWrapStyle}><Lock size={16} /></div>
+          <div className="relative">
+            <div className={ICON_WRAP_CLASS}><Lock size={16} /></div>
             <input
               type={showPassword ? 'text' : 'password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder={mode === 'signup' ? 'Minimum 8 characters' : 'Enter your password'}
-              style={inputStyle}
+              className={INPUT_CLASS}
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              style={{
-                position: 'absolute',
-                right: '14px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                background: 'none',
-                border: 'none',
-                color: '#6B6B70',
-                cursor: 'pointer',
-              }}
+              className="absolute right-[14px] top-1/2 -translate-y-1/2 bg-transparent border-none text-text-muted cursor-pointer"
             >
               {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
@@ -145,17 +110,17 @@ export default function StepAccount({ onNext }: StepAccountProps) {
         {/* Confirm Password (sign-up only) */}
         {mode === 'signup' && (
           <div>
-            <label style={{ color: '#8B8B90', fontSize: '13px', display: 'block', marginBottom: '8px', fontFamily: 'var(--font-inter), Inter, sans-serif' }}>
+            <label className="text-text-secondary text-[13px] block mb-2">
               Confirm password
             </label>
-            <div style={{ position: 'relative' }}>
-              <div style={iconWrapStyle}><Lock size={16} /></div>
+            <div className="relative">
+              <div className={ICON_WRAP_CLASS}><Lock size={16} /></div>
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Re-enter your password"
-                style={inputStyle}
+                className={INPUT_CLASS}
               />
             </div>
           </div>
@@ -163,26 +128,18 @@ export default function StepAccount({ onNext }: StepAccountProps) {
 
         {/* Error */}
         {error && (
-          <p style={{ color: '#EF4444', fontSize: '13px', margin: 0 }}>{error}</p>
+          <p className="text-[#EF4444] text-[13px] m-0">{error}</p>
         )}
 
         {/* Submit */}
         <button
           type="submit"
           disabled={submitting}
-          style={{
-            padding: '14px',
-            backgroundColor: submitting ? '#994700' : '#FF5C00',
-            color: '#FFFFFF',
-            borderRadius: '8px',
-            border: 'none',
-            fontSize: '15px',
-            fontWeight: 600,
-            cursor: submitting ? 'not-allowed' : 'pointer',
-            fontFamily: 'var(--font-inter), Inter, sans-serif',
-            opacity: submitting ? 0.7 : 1,
-            transition: 'background-color 0.15s',
-          }}
+          className={`py-[14px] text-text-primary rounded-lg border-none text-[15px] font-semibold transition-colors ${
+            submitting
+              ? 'bg-[#994700] cursor-not-allowed opacity-70'
+              : 'bg-accent hover:bg-accent-hover cursor-pointer'
+          }`}
         >
           {submitting
             ? 'Please wait...'
@@ -193,18 +150,11 @@ export default function StepAccount({ onNext }: StepAccountProps) {
       </form>
 
       {/* Toggle */}
-      <p style={{ color: '#8B8B90', fontSize: '13px', marginTop: '24px', textAlign: 'center' }}>
+      <p className="text-text-secondary text-[13px] mt-6 text-center">
         {mode === 'signup' ? 'Already have an account?' : "Don't have an account?"}{' '}
         <button
           onClick={() => { setMode(mode === 'signup' ? 'signin' : 'signup'); setError('') }}
-          style={{
-            color: '#FF5C00',
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            fontSize: '13px',
-            fontFamily: 'var(--font-inter), Inter, sans-serif',
-          }}
+          className="text-accent bg-transparent border-none cursor-pointer text-[13px]"
         >
           {mode === 'signup' ? 'Sign in' : 'Sign up'}
         </button>

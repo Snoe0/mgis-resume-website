@@ -66,6 +66,8 @@ Thank you for your consideration.
 Sincerely,
 Alexandra Johnson`
 
+const INPUT_CLASS = 'w-full px-4 py-3 bg-bg-base border border-border-default rounded-lg text-text-primary text-sm outline-none box-border focus:border-accent transition-colors'
+
 export default function OptimizerPage() {
   const [step, setStep] = useState<Step>('upload')
   const [activeTab, setActiveTab] = useState<Tab>('optimization')
@@ -92,93 +94,31 @@ export default function OptimizerPage() {
   /* ── Step 1: Upload ── */
   if (step === 'upload') {
     return (
-      <div
-        style={{
-          backgroundColor: '#0A0A0B',
-          minHeight: '100vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '80px',
-        }}
-      >
-        <div
-          style={{
-            backgroundColor: '#141417',
-            border: '1px solid #1F1F23',
-            borderRadius: '20px',
-            padding: '56px',
-            textAlign: 'center',
-            maxWidth: '480px',
-            width: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '20px',
-          }}
-        >
-          <div
-            style={{
-              width: '64px',
-              height: '64px',
-              borderRadius: '16px',
-              backgroundColor: '#FF5C0020',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
+      <div className="bg-bg-base min-h-screen flex items-center justify-center p-20">
+        <div className="bg-bg-card border border-border-default rounded-[20px] p-14 text-center max-w-[480px] w-full flex flex-col items-center gap-5">
+          <div className="w-16 h-16 rounded-2xl bg-[#FF5C0020] flex items-center justify-center">
             <Sparkles size={28} color="#FF5C00" />
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <h1
-              style={{
-                fontFamily: 'var(--font-instrument-serif), Georgia, serif',
-                fontSize: '28px',
-                color: '#FFFFFF',
-                fontWeight: '400',
-                margin: '0',
-              }}
-            >
+          <div className="flex flex-col gap-2">
+            <h1 className="font-serif text-[28px] text-text-primary font-normal m-0">
               Optimize My Resume
             </h1>
-            <p
-              style={{
-                color: '#8B8B90',
-                fontSize: '15px',
-                lineHeight: '1.6',
-                margin: '0',
-                fontFamily: 'var(--font-inter), Inter, sans-serif',
-              }}
-            >
+            <p className="text-text-secondary text-[15px] leading-relaxed m-0">
               Upload your resume, paste a job listing, and our AI will tailor your resume and generate a matching cover letter.
             </p>
           </div>
 
           <div
-            style={{
-              width: '100%',
-              padding: '32px',
-              border: '1.5px dashed #1F1F23',
-              borderRadius: '12px',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '12px',
-              cursor: 'pointer',
-              transition: 'border-color 0.15s',
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#FF5C00')}
-            onMouseLeave={(e) => (e.currentTarget.style.borderColor = '#1F1F23')}
+            className="w-full p-8 border-[1.5px] border-dashed border-border-default hover:border-accent rounded-xl flex flex-col items-center gap-3 cursor-pointer transition-colors"
             onClick={() => setStep('job')}
           >
             <Upload size={24} color="#6B6B70" />
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', textAlign: 'center' }}>
-              <span style={{ color: '#FFFFFF', fontSize: '14px', fontFamily: 'var(--font-inter), Inter, sans-serif', fontWeight: '500' }}>
+            <div className="flex flex-col gap-1 text-center">
+              <span className="text-text-primary text-sm font-medium">
                 Drop your resume here
               </span>
-              <span style={{ color: '#6B6B70', fontSize: '12px', fontFamily: 'var(--font-inter), Inter, sans-serif' }}>
+              <span className="text-text-muted text-xs">
                 PDF or DOCX · up to 5MB
               </span>
             </div>
@@ -186,25 +126,7 @@ export default function OptimizerPage() {
 
           <button
             onClick={() => setStep('job')}
-            style={{
-              width: '100%',
-              padding: '14px',
-              backgroundColor: '#FF5C00',
-              border: 'none',
-              borderRadius: '8px',
-              color: '#FFFFFF',
-              fontSize: '15px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              fontFamily: 'var(--font-inter), Inter, sans-serif',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '8px',
-              transition: 'background-color 0.15s',
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e05200')}
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#FF5C00')}
+            className="w-full py-[14px] bg-accent hover:bg-accent-hover border-none rounded-lg text-text-primary text-[15px] font-semibold cursor-pointer flex items-center justify-center gap-2 transition-colors"
           >
             Upload Resume <ArrowRight size={16} />
           </button>
@@ -216,112 +138,39 @@ export default function OptimizerPage() {
   /* ── Step 2: Job Listing ── */
   if (step === 'job') {
     return (
-      <div
-        style={{
-          backgroundColor: '#0A0A0B',
-          minHeight: '100vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '80px',
-        }}
-      >
-        <div
-          style={{
-            backgroundColor: '#141417',
-            border: '1px solid #1F1F23',
-            borderRadius: '20px',
-            padding: '56px',
-            maxWidth: '560px',
-            width: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '24px',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <div
-              style={{
-                width: '48px',
-                height: '48px',
-                borderRadius: '12px',
-                backgroundColor: '#8B5CF620',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0,
-              }}
-            >
+      <div className="bg-bg-base min-h-screen flex items-center justify-center p-20">
+        <div className="bg-bg-card border border-border-default rounded-[20px] p-14 max-w-[560px] w-full flex flex-col gap-6">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-[#8B5CF620] flex items-center justify-center flex-shrink-0">
               <FileText size={22} color="#8B5CF6" />
             </div>
             <div>
-              <h1
-                style={{
-                  fontFamily: 'var(--font-instrument-serif), Georgia, serif',
-                  fontSize: '24px',
-                  color: '#FFFFFF',
-                  fontWeight: '400',
-                  margin: '0 0 4px',
-                }}
-              >
+              <h1 className="font-serif text-2xl text-text-primary font-normal m-0 mb-1">
                 Paste the Job Listing
               </h1>
-              <p
-                style={{
-                  color: '#8B8B90',
-                  fontSize: '14px',
-                  margin: '0',
-                  fontFamily: 'var(--font-inter), Inter, sans-serif',
-                }}
-              >
+              <p className="text-text-secondary text-sm m-0">
                 We&apos;ll match your resume to this role and generate a cover letter.
               </p>
             </div>
           </div>
 
           {/* Uploaded file indicator */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-              padding: '12px 16px',
-              backgroundColor: '#10B98110',
-              border: '1px solid #10B98130',
-              borderRadius: '8px',
-            }}
-          >
+          <div className="flex items-center gap-2.5 px-4 py-3 bg-[#10B98110] border border-[#10B98130] rounded-lg">
             <Check size={16} color="#10B981" />
-            <span style={{ color: '#10B981', fontSize: '13px', fontFamily: 'var(--font-inter), Inter, sans-serif', fontWeight: '500' }}>
+            <span className="text-success text-[13px] font-medium">
               alexandra_johnson_resume.pdf uploaded
             </span>
             <button
               onClick={() => setStep('upload')}
-              style={{
-                marginLeft: 'auto',
-                background: 'none',
-                border: 'none',
-                color: '#8B8B90',
-                fontSize: '12px',
-                cursor: 'pointer',
-                fontFamily: 'var(--font-inter), Inter, sans-serif',
-                textDecoration: 'underline',
-              }}
+              className="ml-auto bg-transparent border-none text-text-secondary text-xs cursor-pointer underline"
             >
               Change
             </button>
           </div>
 
           {/* Job title */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            <label
-              style={{
-                color: '#FFFFFF',
-                fontSize: '13px',
-                fontWeight: '600',
-                fontFamily: 'var(--font-inter), Inter, sans-serif',
-              }}
-            >
+          <div className="flex flex-col gap-1.5">
+            <label className="text-text-primary text-[13px] font-semibold">
               Job Title
             </label>
             <input
@@ -329,34 +178,13 @@ export default function OptimizerPage() {
               placeholder="e.g. Senior Product Manager"
               value={jobTitle}
               onChange={(e) => setJobTitle(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '12px 16px',
-                backgroundColor: '#0A0A0B',
-                border: '1px solid #1F1F23',
-                borderRadius: '8px',
-                color: '#FFFFFF',
-                fontSize: '14px',
-                fontFamily: 'var(--font-inter), Inter, sans-serif',
-                outline: 'none',
-                transition: 'border-color 0.15s',
-                boxSizing: 'border-box',
-              }}
-              onFocus={(e) => (e.currentTarget.style.borderColor = '#FF5C00')}
-              onBlur={(e) => (e.currentTarget.style.borderColor = '#1F1F23')}
+              className={INPUT_CLASS}
             />
           </div>
 
           {/* Job description */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            <label
-              style={{
-                color: '#FFFFFF',
-                fontSize: '13px',
-                fontWeight: '600',
-                fontFamily: 'var(--font-inter), Inter, sans-serif',
-              }}
-            >
+          <div className="flex flex-col gap-1.5">
+            <label className="text-text-primary text-[13px] font-semibold">
               Job Description
             </label>
             <textarea
@@ -364,61 +192,18 @@ export default function OptimizerPage() {
               value={jobDescription}
               onChange={(e) => setJobDescription(e.target.value)}
               rows={8}
-              style={{
-                width: '100%',
-                padding: '12px 16px',
-                backgroundColor: '#0A0A0B',
-                border: '1px solid #1F1F23',
-                borderRadius: '8px',
-                color: '#FFFFFF',
-                fontSize: '14px',
-                fontFamily: 'var(--font-inter), Inter, sans-serif',
-                outline: 'none',
-                resize: 'vertical',
-                lineHeight: '1.6',
-                transition: 'border-color 0.15s',
-                boxSizing: 'border-box',
-              }}
-              onFocus={(e) => (e.currentTarget.style.borderColor = '#FF5C00')}
-              onBlur={(e) => (e.currentTarget.style.borderColor = '#1F1F23')}
+              className={`${INPUT_CLASS} resize-y leading-relaxed`}
             />
           </div>
 
           <button
             onClick={() => setStep('results')}
-            style={{
-              width: '100%',
-              padding: '14px',
-              backgroundColor: '#FF5C00',
-              border: 'none',
-              borderRadius: '8px',
-              color: '#FFFFFF',
-              fontSize: '15px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              fontFamily: 'var(--font-inter), Inter, sans-serif',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '8px',
-              transition: 'background-color 0.15s',
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e05200')}
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#FF5C00')}
+            className="w-full py-[14px] bg-accent hover:bg-accent-hover border-none rounded-lg text-text-primary text-[15px] font-semibold cursor-pointer flex items-center justify-center gap-2 transition-colors"
           >
             <Sparkles size={16} /> Optimize & Generate Cover Letter
           </button>
 
-          <p
-            style={{
-              color: '#6B6B70',
-              fontSize: '12px',
-              textAlign: 'center',
-              margin: '0',
-              fontFamily: 'var(--font-inter), Inter, sans-serif',
-              lineHeight: '1.5',
-            }}
-          >
+          <p className="text-text-muted text-xs text-center m-0 leading-normal">
             This will use one AI credit. Results include tailored resume suggestions and a personalized cover letter.
           </p>
         </div>
@@ -428,24 +213,16 @@ export default function OptimizerPage() {
 
   /* ── Step 3: Results ── */
   return (
-    <div style={{ backgroundColor: '#0A0A0B', minHeight: '100vh', paddingBottom: '72px' }}>
+    <div className="bg-bg-base min-h-screen pb-[72px]">
       {/* Score bar */}
-      <div style={{ backgroundColor: '#111113', borderBottom: '1px solid #1F1F23', padding: '32px 80px' }}>
-        <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '28px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className="bg-bg-elevated border-b border-border-default px-20 py-8">
+        <div className="max-w-[1280px] mx-auto flex flex-col gap-7">
+          <div className="flex justify-between items-center">
             <div>
-              <h1
-                style={{
-                  fontFamily: 'var(--font-instrument-serif), Georgia, serif',
-                  fontSize: '24px',
-                  color: '#FFFFFF',
-                  fontWeight: '400',
-                  margin: '0 0 4px',
-                }}
-              >
+              <h1 className="font-serif text-2xl text-text-primary font-normal m-0 mb-1">
                 Optimization Results
               </h1>
-              <span style={{ color: '#8B8B90', fontSize: '13px', fontFamily: 'var(--font-inter), Inter, sans-serif' }}>
+              <span className="text-text-secondary text-[13px]">
                 alexandra_johnson_resume.pdf → Senior Product Manager at Acme Corp
               </span>
             </div>
@@ -457,97 +234,41 @@ export default function OptimizerPage() {
                 setJobTitle('')
                 setJobDescription('')
               }}
-              style={{
-                padding: '8px 16px',
-                backgroundColor: 'transparent',
-                border: '1px solid #1F1F23',
-                borderRadius: '6px',
-                color: '#8B8B90',
-                fontSize: '13px',
-                cursor: 'pointer',
-                fontFamily: 'var(--font-inter), Inter, sans-serif',
-              }}
+              className="px-4 py-2 bg-transparent border border-border-default rounded-md text-text-secondary text-[13px] cursor-pointer"
             >
               Start Over
             </button>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '64px' }}>
+          <div className="flex items-center gap-16">
             {/* Match score circle */}
-            <div style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-              <div
-                style={{
-                  width: '80px',
-                  height: '80px',
-                  borderRadius: '50%',
-                  border: '3px solid #FF5C00',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexDirection: 'column',
-                }}
-              >
-                <span
-                  style={{
-                    fontFamily: 'var(--font-instrument-serif), Georgia, serif',
-                    fontSize: '24px',
-                    color: '#FFFFFF',
-                    lineHeight: '1',
-                  }}
-                >
+            <div className="flex-shrink-0 flex flex-col items-center gap-2">
+              <div className="w-20 h-20 rounded-full border-[3px] border-accent flex items-center justify-center flex-col">
+                <span className="font-serif text-2xl text-text-primary leading-none">
                   74%
                 </span>
               </div>
-              <span style={{ color: '#8B8B90', fontSize: '12px', fontFamily: 'var(--font-inter), Inter, sans-serif' }}>Job Match</span>
+              <span className="text-text-secondary text-xs">Job Match</span>
             </div>
 
             {/* Category bars */}
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div className="flex-1 flex flex-col gap-4">
               {[
                 { label: 'Keyword Match', value: 68, color: '#FF5C00', icon: Target },
                 { label: 'Experience Fit', value: 85, color: '#10B981', icon: TrendingUp },
                 { label: 'Skills Alignment', value: 72, color: '#8B5CF6', icon: BookOpen },
               ].map(({ label, value, color }) => (
-                <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                  <span
-                    style={{
-                      color: '#8B8B90',
-                      fontSize: '13px',
-                      fontFamily: 'var(--font-inter), Inter, sans-serif',
-                      width: '140px',
-                      flexShrink: 0,
-                    }}
-                  >
+                <div key={label} className="flex items-center gap-4">
+                  <span className="text-text-secondary text-[13px] w-[140px] flex-shrink-0">
                     {label}
                   </span>
-                  <div
-                    style={{
-                      flex: 1,
-                      height: '6px',
-                      backgroundColor: '#1F1F23',
-                      borderRadius: '100px',
-                      overflow: 'hidden',
-                    }}
-                  >
+                  <div className="flex-1 h-1.5 bg-border-default rounded-full overflow-hidden">
                     <div
-                      style={{
-                        height: '100%',
-                        width: `${value}%`,
-                        backgroundColor: color,
-                        borderRadius: '100px',
-                      }}
+                      className="h-full rounded-full"
+                      style={{ width: `${value}%`, backgroundColor: color }}
                     />
                   </div>
-                  <span
-                    style={{
-                      color: '#FFFFFF',
-                      fontSize: '13px',
-                      fontFamily: 'var(--font-inter), Inter, sans-serif',
-                      fontWeight: '600',
-                      width: '36px',
-                      flexShrink: 0,
-                    }}
-                  >
+                  <span className="text-text-primary text-[13px] font-semibold w-9 flex-shrink-0">
                     {value}%
                   </span>
                 </div>
@@ -558,131 +279,82 @@ export default function OptimizerPage() {
       </div>
 
       {/* Tabs */}
-      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 80px' }}>
-        <div style={{ display: 'flex', gap: '0', borderBottom: '1px solid #1F1F23', marginTop: '32px' }}>
+      <div className="max-w-[1280px] mx-auto px-20">
+        <div className="flex gap-0 border-b border-border-default mt-8">
           {([
             { key: 'optimization' as Tab, label: 'Resume Optimization', count: optimizationSuggestions.length },
             { key: 'cover-letter' as Tab, label: 'Cover Letter' },
-          ]).map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
-              style={{
-                padding: '12px 24px',
-                backgroundColor: 'transparent',
-                border: 'none',
-                borderBottom: activeTab === tab.key ? '2px solid #FF5C00' : '2px solid transparent',
-                color: activeTab === tab.key ? '#FFFFFF' : '#8B8B90',
-                fontSize: '14px',
-                fontWeight: activeTab === tab.key ? '600' : '400',
-                cursor: 'pointer',
-                fontFamily: 'var(--font-inter), Inter, sans-serif',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                transition: 'color 0.15s, border-color 0.15s',
-              }}
-            >
-              {tab.label}
-              {tab.count !== undefined && (
-                <span
-                  style={{
-                    backgroundColor: activeTab === tab.key ? '#FF5C0020' : '#1F1F23',
-                    color: activeTab === tab.key ? '#FF5C00' : '#8B8B90',
-                    fontSize: '11px',
-                    fontWeight: '600',
-                    padding: '2px 8px',
-                    borderRadius: '100px',
-                  }}
-                >
-                  {tab.count}
-                </span>
-              )}
-            </button>
-          ))}
+          ]).map((tab) => {
+            const isActive = activeTab === tab.key
+            return (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={`px-6 py-3 bg-transparent border-none border-b-2 text-sm cursor-pointer flex items-center gap-2 transition-colors ${
+                  isActive
+                    ? 'border-accent text-text-primary font-semibold'
+                    : 'border-transparent text-text-secondary font-normal'
+                }`}
+              >
+                {tab.label}
+                {tab.count !== undefined && (
+                  <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${
+                    isActive ? 'bg-[#FF5C0020] text-accent' : 'bg-border-default text-text-secondary'
+                  }`}>
+                    {tab.count}
+                  </span>
+                )}
+              </button>
+            )
+          })}
         </div>
       </div>
 
       {/* Tab content */}
-      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '32px 80px' }}>
+      <div className="max-w-[1280px] mx-auto px-20 py-8">
         {activeTab === 'optimization' ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div className="flex flex-col gap-4">
             {optimizationSuggestions.map((s, i) => (
               <div
                 key={i}
-                style={{
-                  backgroundColor: '#141417',
-                  border: `1px solid ${appliedSet.has(i) ? '#10B98140' : '#1F1F23'}`,
-                  borderRadius: '12px',
-                  padding: '24px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '12px',
-                  transition: 'border-color 0.2s',
-                }}
+                className={`bg-bg-card border rounded-xl p-6 flex flex-col gap-3 transition-colors ${
+                  appliedSet.has(i) ? 'border-[#10B98140]' : 'border-border-default'
+                }`}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div className="flex justify-between items-center">
                   <span
-                    style={{
-                      padding: '2px 10px',
-                      borderRadius: '100px',
-                      backgroundColor: `${typeColors[s.type]}20`,
-                      color: typeColors[s.type],
-                      fontSize: '11px',
-                      fontFamily: 'var(--font-inter), Inter, sans-serif',
-                      fontWeight: '600',
-                    }}
+                    className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold"
+                    style={{ backgroundColor: `${typeColors[s.type]}20`, color: typeColors[s.type] }}
                   >
                     {s.label}
                   </span>
                   {appliedSet.has(i) && <Check size={14} color="#10B981" />}
                 </div>
 
-                <div style={{ color: '#FFFFFF', fontSize: '14px', fontWeight: '600', fontFamily: 'var(--font-inter), Inter, sans-serif' }}>
+                <div className="text-text-primary text-sm font-semibold">
                   {s.title}
                 </div>
 
                 {s.original && (
-                  <div style={{ fontSize: '13px', color: '#8B8B90', fontFamily: 'var(--font-inter), Inter, sans-serif', lineHeight: '1.6' }}>
-                    <span style={{ color: '#6B6B70' }}>Before: </span>{s.original}
+                  <div className="text-[13px] text-text-secondary leading-relaxed">
+                    <span className="text-text-muted">Before: </span>{s.original}
                   </div>
                 )}
 
-                <div style={{ fontSize: '13px', color: '#8B8B90', fontFamily: 'var(--font-inter), Inter, sans-serif', lineHeight: '1.6' }}>
-                  <span style={{ color: '#10B981' }}>{s.original ? 'After: ' : '→ '}</span>{s.improved}
+                <div className="text-[13px] text-text-secondary leading-relaxed">
+                  <span className="text-success">{s.original ? 'After: ' : '→ '}</span>{s.improved}
                 </div>
 
-                <div style={{ display: 'flex', gap: '8px' }}>
+                <div className="flex gap-2">
                   <button
                     onClick={() => toggleApplied(i)}
-                    style={{
-                      flex: 1,
-                      padding: '8px',
-                      backgroundColor: appliedSet.has(i) ? '#1F1F23' : '#FF5C00',
-                      border: 'none',
-                      borderRadius: '6px',
-                      color: '#FFFFFF',
-                      fontSize: '12px',
-                      fontWeight: '600',
-                      cursor: 'pointer',
-                      fontFamily: 'var(--font-inter), Inter, sans-serif',
-                      transition: 'background-color 0.15s',
-                    }}
+                    className={`flex-1 p-2 border-none rounded-md text-text-primary text-xs font-semibold cursor-pointer transition-colors ${
+                      appliedSet.has(i) ? 'bg-border-default' : 'bg-accent'
+                    }`}
                   >
                     {appliedSet.has(i) ? 'Undo' : 'Apply'}
                   </button>
-                  <button
-                    style={{
-                      padding: '8px 12px',
-                      backgroundColor: 'transparent',
-                      border: '1px solid #1F1F23',
-                      borderRadius: '6px',
-                      color: '#8B8B90',
-                      fontSize: '12px',
-                      cursor: 'pointer',
-                      fontFamily: 'var(--font-inter), Inter, sans-serif',
-                    }}
-                  >
+                  <button className="px-3 py-2 bg-transparent border border-border-default rounded-md text-text-secondary text-xs cursor-pointer">
                     Dismiss
                   </button>
                 </div>
@@ -691,79 +363,29 @@ export default function OptimizerPage() {
           </div>
         ) : (
           /* Cover Letter tab */
-          <div
-            style={{
-              backgroundColor: '#141417',
-              border: '1px solid #1F1F23',
-              borderRadius: '12px',
-              padding: '40px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '24px',
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ color: '#FFFFFF', fontSize: '16px', fontWeight: '600', fontFamily: 'var(--font-inter), Inter, sans-serif' }}>
+          <div className="bg-bg-card border border-border-default rounded-xl p-10 flex flex-col gap-6">
+            <div className="flex justify-between items-center">
+              <span className="text-text-primary text-base font-semibold">
                 Generated Cover Letter
               </span>
-              <div style={{ display: 'flex', gap: '8px' }}>
+              <div className="flex gap-2">
                 <button
                   onClick={handleCopy}
-                  style={{
-                    padding: '8px 14px',
-                    backgroundColor: 'transparent',
-                    border: '1px solid #1F1F23',
-                    borderRadius: '6px',
-                    color: copied ? '#10B981' : '#8B8B90',
-                    fontSize: '13px',
-                    cursor: 'pointer',
-                    fontFamily: 'var(--font-inter), Inter, sans-serif',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    transition: 'color 0.15s, border-color 0.15s',
-                  }}
+                  className={`px-3.5 py-2 bg-transparent border border-border-default rounded-md text-[13px] cursor-pointer flex items-center gap-1.5 transition-colors ${
+                    copied ? 'text-success' : 'text-text-secondary'
+                  }`}
                 >
                   {copied ? <Check size={14} /> : <ClipboardCopy size={14} />}
                   {copied ? 'Copied!' : 'Copy'}
                 </button>
-                <button
-                  style={{
-                    padding: '8px 14px',
-                    backgroundColor: '#FF5C00',
-                    border: 'none',
-                    borderRadius: '6px',
-                    color: '#FFFFFF',
-                    fontSize: '13px',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                    fontFamily: 'var(--font-inter), Inter, sans-serif',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    transition: 'background-color 0.15s',
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e05200')}
-                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#FF5C00')}
-                >
+                <button className="px-3.5 py-2 bg-accent hover:bg-accent-hover border-none rounded-md text-text-primary text-[13px] font-semibold cursor-pointer flex items-center gap-1.5 transition-colors">
                   <Download size={14} /> Export PDF
                 </button>
               </div>
             </div>
 
             {/* Letter content */}
-            <div
-              style={{
-                backgroundColor: '#FFFFFF',
-                borderRadius: '8px',
-                padding: '48px',
-                fontFamily: 'var(--font-inter), Inter, sans-serif',
-                fontSize: '14px',
-                color: '#1a1a1a',
-                lineHeight: '1.8',
-                whiteSpace: 'pre-line',
-              }}
-            >
+            <div className="bg-white rounded-lg p-12 text-sm text-[#1a1a1a] leading-[1.8] whitespace-pre-line">
               {mockCoverLetter}
             </div>
           </div>
@@ -771,31 +393,12 @@ export default function OptimizerPage() {
       </div>
 
       {/* Sticky export bar */}
-      <div
-        style={{
-          position: 'fixed',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          backgroundColor: '#111113',
-          borderTop: '1px solid #1F1F23',
-          padding: '16px 80px',
-          zIndex: 10,
-        }}
-      >
-        <div
-          style={{
-            maxWidth: '1280px',
-            margin: '0 auto',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
-          <span style={{ color: '#8B8B90', fontSize: '14px', fontFamily: 'var(--font-inter), Inter, sans-serif' }}>
+      <div className="fixed bottom-0 left-0 right-0 bg-bg-elevated border-t border-border-default px-20 py-4 z-10">
+        <div className="max-w-[1280px] mx-auto flex justify-between items-center">
+          <span className="text-text-secondary text-sm">
             {appliedSet.size} of {optimizationSuggestions.length} suggestions applied
           </span>
-          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <div className="flex gap-3 items-center">
             <button
               onClick={() => {
                 setStep('upload')
@@ -804,37 +407,11 @@ export default function OptimizerPage() {
                 setJobTitle('')
                 setJobDescription('')
               }}
-              style={{
-                backgroundColor: 'transparent',
-                border: 'none',
-                color: '#8B8B90',
-                fontSize: '14px',
-                cursor: 'pointer',
-                fontFamily: 'var(--font-inter), Inter, sans-serif',
-                textDecoration: 'underline',
-              }}
+              className="bg-transparent border-none text-text-secondary text-sm cursor-pointer underline"
             >
               Start Over
             </button>
-            <button
-              style={{
-                padding: '10px 24px',
-                backgroundColor: '#FF5C00',
-                border: 'none',
-                borderRadius: '8px',
-                color: '#FFFFFF',
-                fontSize: '14px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                fontFamily: 'var(--font-inter), Inter, sans-serif',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                transition: 'background-color 0.15s',
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e05200')}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#FF5C00')}
-            >
+            <button className="px-6 py-2.5 bg-accent hover:bg-accent-hover border-none rounded-lg text-text-primary text-sm font-semibold cursor-pointer flex items-center gap-2 transition-colors">
               Export Optimized Resume <ArrowRight size={14} />
             </button>
           </div>

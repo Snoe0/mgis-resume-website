@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import {
   DndContext,
   closestCenter,
@@ -105,6 +105,10 @@ const INITIAL_SECTIONS: Section[] = [
   { id: 'skills',     label: 'Skills',     visible: true },
 ]
 
+const TOOLBAR_BTN_CLASS = 'px-1.5 py-1 bg-transparent border-none rounded text-text-secondary cursor-pointer flex items-center justify-center'
+const SIDEBAR_HEADER_CLASS = 'px-5 py-4 border-b border-border-default text-text-primary text-[13px] font-semibold flex-shrink-0'
+const CUSTOMIZE_LABEL_CLASS = 'text-text-secondary text-[11px] font-semibold tracking-[1px] uppercase'
+
 // ─── Sortable row ─────────────────────────────────────────────────────────────
 
 function SortableSectionRow({
@@ -116,41 +120,35 @@ function SortableSectionRow({
   onToggle: () => void
   accentColor: string
 }) {
+  void accentColor
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: section.id })
+
+  // Runtime transform from dnd-kit must remain as inline style
+  const rowStyle: CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  }
 
   return (
     <div
       ref={setNodeRef}
-      style={{
-        transform: CSS.Transform.toString(transform),
-        transition,
-        display: 'flex',
-        alignItems: 'center',
-        gap: '8px',
-        padding: '10px 12px',
-        borderRadius: '6px',
-        backgroundColor: isDragging ? '#1F1F23' : 'transparent',
-        opacity: isDragging ? 0.8 : 1,
-      }}
-      onMouseEnter={(e) => {
-        if (!isDragging) e.currentTarget.style.backgroundColor = '#141417'
-      }}
-      onMouseLeave={(e) => {
-        if (!isDragging) e.currentTarget.style.backgroundColor = 'transparent'
-      }}
+      style={rowStyle}
+      className={`flex items-center gap-2 px-3 py-2.5 rounded-md ${
+        isDragging ? 'bg-border-default opacity-80' : 'bg-transparent opacity-100 hover:bg-bg-card'
+      }`}
     >
       {/* Drag handle */}
       <span
         {...attributes}
         {...listeners}
         title="Drag to reorder"
-        style={{ color: '#6B6B70', fontSize: '10px', flexShrink: 0, cursor: 'grab', lineHeight: 1, userSelect: 'none' }}
+        className="text-text-muted text-[10px] flex-shrink-0 cursor-grab leading-none select-none"
       >
         ⠿
       </span>
 
-      <span style={{ flex: 1, color: '#FFFFFF', fontSize: '14px', fontFamily: 'var(--font-inter), Inter, sans-serif' }}>
+      <span className="flex-1 text-text-primary text-sm">
         {section.label}
       </span>
 
@@ -158,35 +156,15 @@ function SortableSectionRow({
       <button
         onClick={onToggle}
         title={section.visible ? 'Hide section' : 'Show section'}
-        style={{
-          width: '8px',
-          height: '8px',
-          borderRadius: '50%',
-          backgroundColor: section.visible ? '#10B981' : '#6B6B70',
-          border: 'none',
-          cursor: 'pointer',
-          flexShrink: 0,
-          padding: 0,
-          transition: 'background-color 0.15s',
-        }}
+        className={`w-2 h-2 rounded-full border-none cursor-pointer flex-shrink-0 p-0 transition-colors ${
+          section.visible ? 'bg-success' : 'bg-text-muted'
+        }`}
       />
     </div>
   )
 }
 
 // ─── Shared style helpers ─────────────────────────────────────────────────────
-
-const toolbarBtn: CSSProperties = {
-  padding: '4px 6px',
-  backgroundColor: 'transparent',
-  border: 'none',
-  borderRadius: '4px',
-  color: '#8B8B90',
-  cursor: 'pointer',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-}
 
 function fieldInput(extra: CSSProperties = {}): CSSProperties {
   return {
@@ -359,6 +337,14 @@ export default function EditorPage() {
     fontFamily === 'Instrument Serif' ? 'var(--font-instrument-serif), Georgia, serif' :
     `${fontFamily}, serif`
 
+  // ── Auto-resize textarea helper ──────────────────────────────────────────
+
+  const autoResize = useCallback((el: HTMLTextAreaElement | null) => {
+    if (!el) return
+    el.style.height = 'auto'
+    el.style.height = `${el.scrollHeight}px`
+  }, [])
+
   // ── Section renderers ─────────────────────────────────────────────────────
 
   function renderSection(sec: Section) {
@@ -411,7 +397,7 @@ export default function EditorPage() {
             })}
           />
           {/* Contact details row */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px 16px', marginTop: '8px' }}>
+          <div className="flex flex-wrap gap-y-1 gap-x-4 mt-2">
             {CONTACT_FIELDS.map(({ field, placeholder }) => (
               <input
                 key={field}
@@ -426,7 +412,7 @@ export default function EditorPage() {
                   color: '#666',
                   width: 'auto',
                   minWidth: '80px',
-                  maxWidth: '200px',
+                  flex: '1 1 auto',
                 })}
               />
             ))}
@@ -440,9 +426,9 @@ export default function EditorPage() {
         <div>
           <div style={labelStyle}>Experience</div>
           {resumeData.experience.map((exp) => (
-            <div key={exp.id} style={{ marginBottom: '16px' }}>
+            <div key={exp.id} className="mb-4">
               {/* Role / Company / Period row */}
-              <div style={{ display: 'flex', gap: '6px', alignItems: 'baseline', flexWrap: 'wrap' }}>
+              <div className="flex gap-1.5 items-baseline flex-wrap">
                 <input
                   value={exp.role}
                   onChange={(e) => updateExperience(exp.id, 'role', e.target.value)}
@@ -454,7 +440,7 @@ export default function EditorPage() {
                     color: '#111', flex: '1', minWidth: '80px',
                   })}
                 />
-                <span style={{ color: '#888', fontSize: `${fontSize}px`, flexShrink: 0 }}>—</span>
+                <span className="flex-shrink-0" style={{ color: '#888', fontSize: `${fontSize}px` }}>—</span>
                 <input
                   value={exp.company}
                   onChange={(e) => updateExperience(exp.id, 'company', e.target.value)}
@@ -474,25 +460,21 @@ export default function EditorPage() {
                   onBlur={(e) => (e.target.style.outline = 'none')}
                   style={fieldInput({
                     fontFamily: fontCss, fontSize: `${fontSize - 1}px`, color: '#777',
-                    width: '120px', flexShrink: 0,
+                    width: 'auto', minWidth: '120px', flexShrink: 0,
                   })}
                 />
               </div>
               {/* Description */}
               <textarea
+                ref={autoResize}
                 value={exp.description}
-                onChange={(e) => updateExperience(exp.id, 'description', e.target.value)}
+                onChange={(e) => { updateExperience(exp.id, 'description', e.target.value); autoResize(e.target) }}
                 placeholder="Describe your achievements and impact..."
-                rows={3}
+                rows={1}
                 onFocus={(e) => (e.target.style.outline = `1px dashed ${accentColor}70`)}
                 onBlur={(e) => (e.target.style.outline = 'none')}
-                style={{
-                  ...fieldInput({ fontFamily: fontCss, fontSize: `${fontSize - 1}px`, color: '#555', lineHeight: '1.6' }),
-                  resize: 'none',
-                  display: 'block',
-                  width: '100%',
-                  marginTop: '4px',
-                }}
+                className="resize-none block w-full mt-1 overflow-hidden"
+                style={fieldInput({ fontFamily: fontCss, fontSize: `${fontSize - 1}px`, color: '#555', lineHeight: '1.6' })}
               />
             </div>
           ))}
@@ -505,8 +487,8 @@ export default function EditorPage() {
         <div>
           <div style={labelStyle}>Education</div>
           {resumeData.education.map((edu) => (
-            <div key={edu.id} style={{ marginBottom: '12px' }}>
-              <div style={{ display: 'flex', gap: '6px', alignItems: 'baseline', flexWrap: 'wrap' }}>
+            <div key={edu.id} className="mb-3">
+              <div className="flex gap-1.5 items-baseline flex-wrap">
                 <input
                   value={edu.degree}
                   onChange={(e) => updateEducation(edu.id, 'degree', e.target.value)}
@@ -526,7 +508,7 @@ export default function EditorPage() {
                   onBlur={(e) => (e.target.style.outline = 'none')}
                   style={fieldInput({
                     fontFamily: fontCss, fontSize: `${fontSize - 1}px`, color: '#777',
-                    width: '120px', flexShrink: 0,
+                    width: 'auto', minWidth: '120px', flexShrink: 0,
                   })}
                 />
               </div>
@@ -551,33 +533,23 @@ export default function EditorPage() {
         <div>
           <div style={labelStyle}>Skills</div>
           <textarea
+            ref={autoResize}
             value={resumeData.skills.join(', ')}
-            onChange={(e) => updateSkills(e.target.value)}
+            onChange={(e) => { updateSkills(e.target.value); autoResize(e.target) }}
             placeholder="Skill 1, Skill 2, Skill 3..."
-            rows={2}
+            rows={1}
             onFocus={(e) => (e.target.style.outline = `1px dashed ${accentColor}70`)}
             onBlur={(e) => (e.target.style.outline = 'none')}
-            style={{
-              ...fieldInput({ fontFamily: fontCss, fontSize: `${fontSize - 1}px`, color: '#555', lineHeight: '1.6' }),
-              resize: 'none',
-              display: 'block',
-              width: '100%',
-              marginBottom: '10px',
-            }}
+            className="resize-none block w-full mb-2.5 overflow-hidden"
+            style={fieldInput({ fontFamily: fontCss, fontSize: `${fontSize - 1}px`, color: '#555', lineHeight: '1.6' })}
           />
           {/* Chip preview */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+          <div className="flex flex-wrap gap-1.5">
             {resumeData.skills.map((skill, i) => (
               <span
                 key={i}
-                style={{
-                  padding: '3px 10px',
-                  backgroundColor: '#F4F4F0',
-                  borderRadius: '100px',
-                  fontSize: `${fontSize - 2}px`,
-                  fontFamily: fontCss,
-                  color: '#555',
-                }}
+                className="px-2.5 py-[3px] bg-[#F4F4F0] rounded-full text-[#555]"
+                style={{ fontSize: `${fontSize - 2}px`, fontFamily: fontCss }}
               >
                 {skill}
               </span>
@@ -593,142 +565,76 @@ export default function EditorPage() {
   // ─── Render ─────────────────────────────────────────────────────────────────
 
   const visibleSections = sections.filter((s) => s.visible)
+  // Suppress unused warning for layout state (preserved from original)
+  void layout
 
   return (
-    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: '#0A0A0B', overflow: 'hidden' }}>
+    <div className="h-screen flex flex-col bg-bg-base overflow-hidden">
+
+      {/* Visually hidden H1 for accessibility and SEO */}
+      <h1 className="sr-only">
+        Resume Editor
+      </h1>
 
       {/* Site header — navigation */}
       <Header />
 
       {/* Editor toolbar */}
-      <div
-        style={{
-          height: '52px',
-          backgroundColor: '#111113',
-          borderBottom: '1px solid #1F1F23',
-          display: 'flex',
-          alignItems: 'center',
-          padding: '0 20px',
-          gap: '12px',
-          flexShrink: 0,
-        }}
-      >
+      <div className="h-[52px] bg-bg-elevated border-b border-border-default flex items-center px-5 gap-3 flex-shrink-0">
         {/* Undo / Redo */}
-        <div style={{ display: 'flex', gap: '2px', flexShrink: 0 }}>
-          <button style={toolbarBtn} onClick={handleUndo} title="Undo" disabled={!prevData}>
+        <div className="flex gap-0.5 flex-shrink-0">
+          <button className={TOOLBAR_BTN_CLASS} onClick={handleUndo} title="Undo" disabled={!prevData}>
             <Undo2 size={15} />
           </button>
-          <button style={toolbarBtn} title="Redo">
+          <button className={TOOLBAR_BTN_CLASS} title="Redo">
             <Redo2 size={15} />
           </button>
         </div>
 
         {/* Divider */}
-        <div style={{ width: '1px', height: '24px', backgroundColor: '#1F1F23', flexShrink: 0 }} />
+        <div className="w-px h-6 bg-border-default flex-shrink-0" />
 
         {/* Document name — centered */}
         <input
           value={docName}
           onChange={(e) => setDocName(e.target.value)}
-          style={{
-            background: 'transparent',
-            border: 'none',
-            outline: 'none',
-            color: '#FFFFFF',
-            fontSize: '14px',
-            fontFamily: 'var(--font-inter), Inter, sans-serif',
-            flex: 1,
-            textAlign: 'center',
-            minWidth: 0,
-          }}
+          className="bg-transparent border-none outline-none text-text-primary text-sm flex-1 text-center min-w-0"
         />
 
         {/* Divider */}
-        <div style={{ width: '1px', height: '24px', backgroundColor: '#1F1F23', flexShrink: 0 }} />
+        <div className="w-px h-6 bg-border-default flex-shrink-0" />
 
         {/* Format buttons */}
-        <div style={{ display: 'flex', gap: '2px', backgroundColor: '#141417', borderRadius: '6px', padding: '2px', flexShrink: 0 }}>
-          <button style={toolbarBtn} title="Bold"><Bold size={14} /></button>
-          <button style={toolbarBtn} title="Italic"><Italic size={14} /></button>
-          <button style={toolbarBtn} title="Underline"><Underline size={14} /></button>
+        <div className="flex gap-0.5 bg-bg-card rounded-md p-0.5 flex-shrink-0">
+          <button className={TOOLBAR_BTN_CLASS} title="Bold"><Bold size={14} /></button>
+          <button className={TOOLBAR_BTN_CLASS} title="Italic"><Italic size={14} /></button>
+          <button className={TOOLBAR_BTN_CLASS} title="Underline"><Underline size={14} /></button>
         </div>
 
         {/* Preview */}
-        <button
-          style={{
-            padding: '6px 12px',
-            backgroundColor: 'transparent',
-            border: '1px solid #1F1F23',
-            borderRadius: '6px',
-            color: '#8B8B90',
-            fontSize: '13px',
-            cursor: 'pointer',
-            fontFamily: 'var(--font-inter), Inter, sans-serif',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '5px',
-            flexShrink: 0,
-          }}
-        >
+        <button className="px-3 py-1.5 bg-transparent border border-border-default rounded-md text-text-secondary text-[13px] cursor-pointer flex items-center gap-1.5 flex-shrink-0">
           <Eye size={13} /> Preview
         </button>
 
         {/* Export DOCX */}
         <button
           onClick={handleExportDocx}
-          style={{
-            padding: '6px 14px',
-            backgroundColor: '#FF5C00',
-            border: 'none',
-            borderRadius: '6px',
-            color: '#FFFFFF',
-            fontSize: '13px',
-            fontWeight: '600',
-            cursor: 'pointer',
-            fontFamily: 'var(--font-inter), Inter, sans-serif',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            transition: 'background-color 0.15s',
-            flexShrink: 0,
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e05200')}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#FF5C00')}
+          className="px-3.5 py-1.5 bg-accent hover:bg-accent-hover border-none rounded-md text-text-primary text-[13px] font-semibold cursor-pointer flex items-center gap-1.5 transition-colors flex-shrink-0"
         >
           <FileDown size={13} /> Export DOCX
         </button>
       </div>
 
       {/* Three-panel body */}
-      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+      <div className="flex-1 flex overflow-hidden">
 
         {/* ── Left: Sections panel ── */}
-        <aside
-          style={{
-            width: '240px',
-            flexShrink: 0,
-            backgroundColor: '#111113',
-            borderRight: '1px solid #1F1F23',
-            display: 'flex',
-            flexDirection: 'column',
-            overflow: 'hidden',
-          }}
-        >
-          <div
-            style={{
-              padding: '16px 20px',
-              borderBottom: '1px solid #1F1F23',
-              color: '#FFFFFF',
-              fontSize: '13px',
-              fontWeight: '600',
-              fontFamily: 'var(--font-inter), Inter, sans-serif',
-              flexShrink: 0,
-            }}
-          >
+        <aside className="w-60 flex-shrink-0 bg-bg-elevated border-r border-border-default flex flex-col overflow-hidden">
+          <div className={SIDEBAR_HEADER_CLASS}>
             Sections
           </div>
 
-          <div style={{ flex: 1, overflowY: 'auto', padding: '8px' }}>
+          <div className="flex-1 overflow-y-auto p-2">
             <DndContext
               sensors={sensors}
               collisionDetection={closestCenter}
@@ -747,57 +653,25 @@ export default function EditorPage() {
             </DndContext>
           </div>
 
-          <div style={{ padding: '12px', borderTop: '1px solid #1F1F23', flexShrink: 0 }}>
-            <button
-              style={{
-                width: '100%',
-                padding: '8px',
-                backgroundColor: 'transparent',
-                border: '1px dashed #1F1F23',
-                borderRadius: '6px',
-                color: '#8B8B90',
-                fontSize: '13px',
-                cursor: 'pointer',
-                fontFamily: 'var(--font-inter), Inter, sans-serif',
-              }}
-            >
+          <div className="p-3 border-t border-border-default flex-shrink-0">
+            <button className="w-full p-2 bg-transparent border border-dashed border-border-default rounded-md text-text-secondary text-[13px] cursor-pointer">
               + Add Section
             </button>
           </div>
         </aside>
 
         {/* ── Center: Editable resume canvas ── */}
-        <main
-          style={{
-            flex: 1,
-            backgroundColor: '#0A0A0B',
-            overflowY: 'auto',
-            display: 'flex',
-            alignItems: 'flex-start',
-            justifyContent: 'center',
-            padding: '40px 32px 80px',
-          }}
-        >
-          {/* A4 resume card */}
+        <main className="flex-1 bg-bg-base overflow-y-auto flex items-start justify-center px-8 pt-10 pb-20">
+          {/* US Letter resume card: 8.5 × 11 inches at 96dpi */}
           <div
-            style={{
-              width: '680px',
-              backgroundColor: '#FFFFFF',
-              borderRadius: '4px',
-              padding: '52px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '0',
-              boxShadow: '0 8px 40px rgba(0,0,0,0.6)',
-              minHeight: '900px',
-            }}
+            className="w-[816px] h-[1056px] bg-white rounded flex flex-col p-[52px] overflow-hidden flex-shrink-0 shadow-[0_8px_40px_rgba(0,0,0,0.6)]"
           >
             {visibleSections.map((sec, i) => (
               <div key={sec.id}>
                 {renderSection(sec)}
                 {/* Accent divider between sections */}
                 {i < visibleSections.length - 1 && (
-                  <div style={{ height: '1.5px', backgroundColor: accentColor, margin: '20px 0' }} />
+                  <div className="my-5" style={{ height: '1.5px', backgroundColor: accentColor }} />
                 )}
               </div>
             ))}
@@ -805,93 +679,60 @@ export default function EditorPage() {
         </main>
 
         {/* ── Right: Customize panel ── */}
-        <aside
-          style={{
-            width: '280px',
-            flexShrink: 0,
-            backgroundColor: '#111113',
-            borderLeft: '1px solid #1F1F23',
-            display: 'flex',
-            flexDirection: 'column',
-            overflowY: 'auto',
-          }}
-        >
-          <div
-            style={{
-              padding: '16px 20px',
-              borderBottom: '1px solid #1F1F23',
-              color: '#FFFFFF',
-              fontSize: '13px',
-              fontWeight: '600',
-              fontFamily: 'var(--font-inter), Inter, sans-serif',
-              flexShrink: 0,
-            }}
-          >
+        <aside className="w-[280px] flex-shrink-0 bg-bg-elevated border-l border-border-default flex flex-col overflow-y-auto">
+          <div className={SIDEBAR_HEADER_CLASS}>
             Customize
           </div>
 
-          <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <div className="p-5 flex flex-col gap-6">
 
             {/* Accent color */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <span style={{ color: '#8B8B90', fontSize: '11px', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', fontFamily: 'var(--font-inter), Inter, sans-serif' }}>
+            <div className="flex flex-col gap-2.5">
+              <span className={CUSTOMIZE_LABEL_CLASS}>
                 Accent Color
               </span>
-              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                {ACCENT_COLORS.map((color) => (
-                  <button
-                    key={color}
-                    onClick={() => setAccentColor(color)}
-                    title={color}
-                    style={{
-                      width: '28px',
-                      height: '28px',
-                      borderRadius: '50%',
-                      backgroundColor: color,
-                      border: accentColor === color ? '2px solid #FFFFFF' : '2px solid transparent',
-                      cursor: 'pointer',
-                      outline: accentColor === color ? `2px solid ${color}` : 'none',
-                      outlineOffset: '2px',
-                      transition: 'transform 0.15s',
-                      padding: 0,
-                    }}
-                    onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.15)')}
-                    onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
-                  />
-                ))}
+              <div className="flex gap-2 flex-wrap">
+                {ACCENT_COLORS.map((color) => {
+                  const isSelected = accentColor === color
+                  return (
+                    <button
+                      key={color}
+                      onClick={() => setAccentColor(color)}
+                      title={color}
+                      className="w-7 h-7 rounded-full cursor-pointer transition-transform hover:scale-[1.15] p-0"
+                      style={{
+                        backgroundColor: color,
+                        border: isSelected ? '2px solid #FFFFFF' : '2px solid transparent',
+                        outline: isSelected ? `2px solid ${color}` : 'none',
+                        outlineOffset: '2px',
+                      }}
+                    />
+                  )
+                })}
               </div>
             </div>
 
             {/* Font family */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <span style={{ color: '#8B8B90', fontSize: '11px', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', fontFamily: 'var(--font-inter), Inter, sans-serif' }}>
+            <div className="flex flex-col gap-2.5">
+              <span className={CUSTOMIZE_LABEL_CLASS}>
                 Font
               </span>
               <select
                 value={fontFamily}
                 onChange={(e) => setFontFamily(e.target.value)}
-                style={{
-                  backgroundColor: '#141417',
-                  border: '1px solid #1F1F23',
-                  borderRadius: '6px',
-                  padding: '8px 12px',
-                  color: '#FFFFFF',
-                  fontSize: '13px',
-                  fontFamily: 'var(--font-inter), Inter, sans-serif',
-                  cursor: 'pointer',
-                }}
+                className="bg-bg-card border border-border-default rounded-md px-3 py-2 text-text-primary text-[13px] cursor-pointer"
               >
                 {FONT_OPTIONS.map((f) => <option key={f} value={f}>{f}</option>)}
               </select>
             </div>
 
             {/* Font size */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ color: '#8B8B90', fontSize: '11px', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', fontFamily: 'var(--font-inter), Inter, sans-serif' }}>
+            <div className="flex flex-col gap-2.5">
+              <div className="flex justify-between items-center">
+                <span className={CUSTOMIZE_LABEL_CLASS}>
                   Font Size
                 </span>
-                <span style={{ color: '#FFFFFF', fontSize: '13px', fontFamily: 'var(--font-inter), Inter, sans-serif' }}>
+                <span className="text-text-primary text-[13px]">
                   {fontSize}px
                 </span>
               </div>
@@ -902,41 +743,37 @@ export default function EditorPage() {
                 step={1}
                 value={fontSize}
                 onChange={(e) => setFontSize(Number(e.target.value))}
-                style={{ width: '100%', accentColor: '#FF5C00' } as CSSProperties}
+                className="w-full"
+                style={{ accentColor: '#FF5C00' }}
               />
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ color: '#6B6B70', fontSize: '11px', fontFamily: 'var(--font-inter), Inter, sans-serif' }}>Small</span>
-                <span style={{ color: '#6B6B70', fontSize: '11px', fontFamily: 'var(--font-inter), Inter, sans-serif' }}>Large</span>
+              <div className="flex justify-between">
+                <span className="text-text-muted text-[11px]">Small</span>
+                <span className="text-text-muted text-[11px]">Large</span>
               </div>
             </div>
 
             {/* Layout */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <span style={{ color: '#8B8B90', fontSize: '11px', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', fontFamily: 'var(--font-inter), Inter, sans-serif' }}>
+            <div className="flex flex-col gap-2.5">
+              <span className={CUSTOMIZE_LABEL_CLASS}>
                 Layout
               </span>
-              <div style={{ display: 'flex', backgroundColor: '#141417', border: '1px solid #1F1F23', borderRadius: '6px', padding: '3px' }}>
-                {(['single', 'two'] as const).map((l) => (
-                  <button
-                    key={l}
-                    onClick={() => setLayout(l)}
-                    style={{
-                      flex: 1,
-                      padding: '6px 0',
-                      borderRadius: '4px',
-                      backgroundColor: layout === l ? '#FF5C00' : 'transparent',
-                      border: 'none',
-                      color: layout === l ? '#FFFFFF' : '#8B8B90',
-                      fontSize: '12px',
-                      cursor: 'pointer',
-                      fontFamily: 'var(--font-inter), Inter, sans-serif',
-                      fontWeight: layout === l ? '600' : '400',
-                      transition: 'all 0.15s',
-                    }}
-                  >
-                    {l === 'single' ? 'Single Col' : 'Two Col'}
-                  </button>
-                ))}
+              <div className="flex bg-bg-card border border-border-default rounded-md p-[3px]">
+                {(['single', 'two'] as const).map((l) => {
+                  const isActive = layout === l
+                  return (
+                    <button
+                      key={l}
+                      onClick={() => setLayout(l)}
+                      className={`flex-1 py-1.5 rounded border-none text-xs cursor-pointer transition-all ${
+                        isActive
+                          ? 'bg-accent text-text-primary font-semibold'
+                          : 'bg-transparent text-text-secondary font-normal'
+                      }`}
+                    >
+                      {l === 'single' ? 'Single Col' : 'Two Col'}
+                    </button>
+                  )
+                })}
               </div>
             </div>
 

@@ -17,8 +17,8 @@ interface VerifiedSession {
 export default function CheckoutSuccessPage() {
   return (
     <Suspense fallback={
-      <div style={{ backgroundColor: '#0A0A0B', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <Loader2 size={48} style={{ color: '#FF5C00', animation: 'spin 1s linear infinite' }} />
+      <div className="bg-bg-base min-h-screen flex items-center justify-center">
+        <Loader2 size={48} className="text-accent animate-spin" />
       </div>
     }>
       <CheckoutSuccessContent />
@@ -70,129 +70,70 @@ function CheckoutSuccessContent() {
   }, [sessionId, isFree, freeTemplateId])
 
   return (
-    <div style={{ backgroundColor: '#0A0A0B', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' }}>
-      <div style={{
-        backgroundColor: '#141417',
-        border: '1px solid #1F1F23',
-        borderRadius: '16px',
-        padding: '48px',
-        maxWidth: '480px',
-        width: '100%',
-        textAlign: 'center',
-      }}>
+    <div className="bg-bg-base min-h-screen flex items-center justify-center px-5 py-10">
+      <div className="bg-bg-card border border-border-default rounded-2xl p-12 max-w-[480px] w-full text-center">
         {loading ? (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
-            <Loader2 size={48} style={{ color: '#FF5C00', animation: 'spin 1s linear infinite' }} />
-            <p style={{ color: '#8B8B90', fontSize: '15px', fontFamily: 'var(--font-inter), Inter, sans-serif' }}>
+          <div className="flex flex-col items-center gap-4">
+            <Loader2 size={48} className="text-accent animate-spin" />
+            <p className="text-text-secondary text-[15px]">
               Verifying your purchase...
             </p>
           </div>
         ) : error ? (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
-            <div style={{ color: '#EF4444', fontSize: '15px', fontFamily: 'var(--font-inter), Inter, sans-serif' }}>
+          <div className="flex flex-col items-center gap-4">
+            <div className="text-[#EF4444] text-[15px]">
               {error}
             </div>
             <Link
               href="/browse"
-              style={{
-                color: '#FF5C00',
-                textDecoration: 'none',
-                fontSize: '14px',
-                fontFamily: 'var(--font-inter), Inter, sans-serif',
-              }}
+              className="text-accent no-underline text-sm"
             >
               Back to Browse
             </Link>
           </div>
         ) : session ? (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
-            <CheckCircle size={56} style={{ color: '#22C55E' }} />
+          <div className="flex flex-col items-center gap-6">
+            <CheckCircle size={56} className="text-[#22C55E]" />
 
             <div>
-              <h1 style={{
-                fontFamily: 'var(--font-instrument-serif), Georgia, serif',
-                fontSize: '28px',
-                color: '#FFFFFF',
-                fontWeight: '400',
-                margin: '0 0 8px',
-              }}>
+              <h1 className="font-serif text-[28px] text-text-primary font-normal m-0 mb-2">
                 {session.status === 'free' ? 'Template Ready' : 'Payment Successful'}
               </h1>
-              <p style={{ color: '#8B8B90', fontSize: '14px', fontFamily: 'var(--font-inter), Inter, sans-serif', margin: 0 }}>
+              <p className="text-text-secondary text-sm m-0">
                 {session.status === 'free'
                   ? 'Your free template is ready to download.'
                   : 'Your purchase has been confirmed.'}
               </p>
             </div>
 
-            <div style={{
-              backgroundColor: '#0A0A0B',
-              borderRadius: '12px',
-              padding: '20px',
-              width: '100%',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '12px',
-            }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ color: '#6B6B70', fontSize: '13px', fontFamily: 'var(--font-inter), Inter, sans-serif' }}>Template</span>
-                <span style={{ color: '#FFFFFF', fontSize: '14px', fontWeight: '500', fontFamily: 'var(--font-inter), Inter, sans-serif' }}>{session.templateName}</span>
+            <div className="bg-bg-base rounded-xl p-5 w-full flex flex-col gap-3">
+              <div className="flex justify-between items-center">
+                <span className="text-text-muted text-[13px]">Template</span>
+                <span className="text-text-primary text-sm font-medium">{session.templateName}</span>
               </div>
               {session.amount !== null && session.amount > 0 && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#6B6B70', fontSize: '13px', fontFamily: 'var(--font-inter), Inter, sans-serif' }}>Amount</span>
-                  <span style={{ color: '#FFFFFF', fontSize: '14px', fontWeight: '500', fontFamily: 'var(--font-inter), Inter, sans-serif' }}>${(session.amount / 100).toFixed(2)}</span>
+                <div className="flex justify-between items-center">
+                  <span className="text-text-muted text-[13px]">Amount</span>
+                  <span className="text-text-primary text-sm font-medium">${(session.amount / 100).toFixed(2)}</span>
                 </div>
               )}
               {session.customerEmail && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#6B6B70', fontSize: '13px', fontFamily: 'var(--font-inter), Inter, sans-serif' }}>Receipt sent to</span>
-                  <span style={{ color: '#FFFFFF', fontSize: '14px', fontWeight: '500', fontFamily: 'var(--font-inter), Inter, sans-serif' }}>{session.customerEmail}</span>
+                <div className="flex justify-between items-center">
+                  <span className="text-text-muted text-[13px]">Receipt sent to</span>
+                  <span className="text-text-primary text-sm font-medium">{session.customerEmail}</span>
                 </div>
               )}
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
+            <div className="flex flex-col gap-3 w-full">
               <button
-                style={{
-                  padding: '14px',
-                  backgroundColor: '#FF5C00',
-                  color: '#FFFFFF',
-                  borderRadius: '8px',
-                  border: 'none',
-                  fontSize: '15px',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  fontFamily: 'var(--font-inter), Inter, sans-serif',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
-                  transition: 'background-color 0.15s',
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e05200')}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#FF5C00')}
+                className="px-0 py-[14px] bg-accent hover:bg-accent-hover text-text-primary rounded-lg border-none text-[15px] font-semibold cursor-pointer flex items-center justify-center gap-2 transition-colors"
               >
                 <Download size={16} /> Download Template
               </button>
               <Link
                 href="/browse"
-                style={{
-                  padding: '14px',
-                  backgroundColor: 'transparent',
-                  color: '#FFFFFF',
-                  borderRadius: '8px',
-                  border: '1px solid #1F1F23',
-                  fontSize: '15px',
-                  fontWeight: '500',
-                  textDecoration: 'none',
-                  fontFamily: 'var(--font-inter), Inter, sans-serif',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
-                  transition: 'border-color 0.15s',
-                }}
+                className="px-0 py-[14px] bg-transparent text-text-primary rounded-lg border border-border-default text-[15px] font-medium no-underline flex items-center justify-center gap-2 transition-colors"
               >
                 Browse More Templates <ArrowRight size={16} />
               </Link>

@@ -19,31 +19,12 @@ export default function BrowsePage() {
   const activeFilters = [...activeIndustry, ...activeExp]
 
   return (
-    <div style={{ backgroundColor: '#0A0A0B', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ display: 'flex', flex: 1 }}>
+    <div className="bg-bg-base min-h-screen flex flex-col">
+      <div className="flex flex-1">
 
         {/* ── Sidebar ── */}
-        <aside
-          style={{
-            width: '280px',
-            flexShrink: 0,
-            backgroundColor: '#111113',
-            borderRight: '1px solid #1F1F23',
-            padding: '32px 24px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '32px',
-            alignSelf: 'stretch',
-          }}
-        >
-          <span
-            style={{
-              color: '#FFFFFF',
-              fontSize: '16px',
-              fontWeight: '600',
-              fontFamily: 'var(--font-inter), Inter, sans-serif',
-            }}
-          >
+        <aside className="w-[280px] flex-shrink-0 bg-bg-elevated border-r border-border-default px-6 py-8 flex flex-col gap-8 self-stretch">
+          <span className="text-text-primary text-base font-semibold">
             Filter Templates
           </span>
 
@@ -65,55 +46,29 @@ export default function BrowsePage() {
         </aside>
 
         {/* ── Main ── */}
-        <main
-          style={{
-            flex: 1,
-            padding: '32px 40px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '24px',
-          }}
-        >
+        <main className="flex-1 px-10 py-8 flex flex-col gap-6">
           {/* Top bar */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <h1
-                style={{
-                  fontFamily: 'var(--font-instrument-serif), Georgia, serif',
-                  fontSize: '36px',
-                  color: '#FFFFFF',
-                  fontWeight: '400',
-                  margin: '0',
-                }}
-              >
+          <div className="flex justify-between items-end">
+            <div className="flex flex-col gap-1">
+              <h1 className="font-serif text-4xl text-text-primary font-normal m-0">
                 Browse Templates
               </h1>
-              <span style={{ color: '#8B8B90', fontSize: '14px', fontFamily: 'var(--font-inter), Inter, sans-serif' }}>
+              <span className="text-text-secondary text-sm">
                 Showing {templates.length * 4} templates
               </span>
             </div>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '8px 12px',
-                backgroundColor: '#141417',
-                border: '1px solid #1F1F23',
-                borderRadius: '6px',
-              }}
-            >
-              <span style={{ color: '#8B8B90', fontSize: '13px', fontFamily: 'var(--font-inter), Inter, sans-serif' }}>
+            <div className="flex items-center gap-2 px-3 py-2 bg-bg-card border border-border-default rounded-md">
+              <span className="text-text-secondary text-[13px]">
                 Sort: Most Popular
               </span>
-              <span style={{ color: '#8B8B90', fontSize: '10px' }}>▾</span>
+              <span className="text-text-secondary text-[10px]">▾</span>
             </div>
           </div>
 
           {/* Active filter pills */}
           {activeFilters.length > 0 && (
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
-              <span style={{ color: '#6B6B70', fontSize: '13px', fontFamily: 'var(--font-inter), Inter, sans-serif' }}>
+            <div className="flex gap-2 items-center flex-wrap">
+              <span className="text-text-muted text-[13px]">
                 Active:
               </span>
               {activeFilters.map((filter) => (
@@ -123,59 +78,43 @@ export default function BrowsePage() {
                     if (activeIndustry.includes(filter)) toggleFilter(activeIndustry, setActiveIndustry, filter)
                     else toggleFilter(activeExp, setActiveExp, filter)
                   }}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    padding: '4px 10px',
-                    backgroundColor: '#FF5C0015',
-                    border: '1px solid #FF5C0040',
-                    borderRadius: '100px',
-                    color: '#FF5C00',
-                    fontSize: '12px',
-                    cursor: 'pointer',
-                    fontFamily: 'var(--font-inter), Inter, sans-serif',
-                  }}
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#FF5C0015] border border-[#FF5C0040] rounded-full text-accent text-xs cursor-pointer"
                 >
-                  {filter} <span style={{ fontSize: '14px' }}>×</span>
+                  {filter} <span className="text-sm">×</span>
                 </button>
               ))}
             </div>
           )}
 
           {/* Card grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
+          <div className="grid grid-cols-3 gap-4">
             {templates.map((t) => (
               <TemplateCard key={t.id} {...t} />
             ))}
           </div>
 
           {/* Pagination */}
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '4px', paddingTop: '8px' }}>
-            {['←', '1', '2', '3', '→'].map((label, i) => (
-              <button
-                key={label + i}
-                onClick={() => {
-                  if (label === '←' && currentPage > 1) setCurrentPage(currentPage - 1)
-                  else if (label === '→') setCurrentPage(currentPage + 1)
-                  else if (!isNaN(Number(label))) setCurrentPage(Number(label))
-                }}
-                style={{
-                  padding: '8px 12px',
-                  borderRadius: '6px',
-                  backgroundColor: label === String(currentPage) ? '#FF5C00' : '#141417',
-                  border: `1px solid ${label === String(currentPage) ? 'transparent' : '#1F1F23'}`,
-                  color: label === String(currentPage) ? '#FFFFFF' : '#8B8B90',
-                  fontSize: '14px',
-                  fontWeight: label === String(currentPage) ? '600' : '400',
-                  cursor: 'pointer',
-                  fontFamily: 'var(--font-inter), Inter, sans-serif',
-                  transition: 'background-color 0.15s',
-                }}
-              >
-                {label}
-              </button>
-            ))}
+          <div className="flex justify-center gap-1 pt-2">
+            {['←', '1', '2', '3', '→'].map((label, i) => {
+              const isActive = label === String(currentPage)
+              return (
+                <button
+                  key={label + i}
+                  onClick={() => {
+                    if (label === '←' && currentPage > 1) setCurrentPage(currentPage - 1)
+                    else if (label === '→') setCurrentPage(currentPage + 1)
+                    else if (!isNaN(Number(label))) setCurrentPage(Number(label))
+                  }}
+                  className={`px-3 py-2 rounded-md text-sm cursor-pointer transition-colors ${
+                    isActive
+                      ? 'bg-accent border border-transparent text-text-primary font-semibold'
+                      : 'bg-bg-card border border-border-default text-text-secondary font-normal'
+                  }`}
+                >
+                  {label}
+                </button>
+              )
+            })}
           </div>
         </main>
       </div>
@@ -195,50 +134,22 @@ function FilterGroup({
   onToggle: (v: string) => void
 }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-      <span
-        style={{
-          color: '#6B6B70',
-          fontSize: '11px',
-          fontWeight: '600',
-          letterSpacing: '1px',
-          fontFamily: 'var(--font-inter), Inter, sans-serif',
-          textTransform: 'uppercase',
-        }}
-      >
+    <div className="flex flex-col gap-3">
+      <span className="text-text-muted text-[11px] font-semibold tracking-[1px] uppercase">
         {label}
       </span>
       {options.map((option) => (
         <label
           key={option}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
-            cursor: 'pointer',
-          }}
+          className="flex items-center gap-2.5 cursor-pointer"
         >
           <span
             onClick={() => onToggle(option)}
-            style={{
-              width: '16px',
-              height: '16px',
-              borderRadius: '3px',
-              border: `1.5px solid #1F1F23`,
-              backgroundColor: active.includes(option) ? '#FF5C00' : '#141417',
-              flexShrink: 0,
-              display: 'inline-block',
-              cursor: 'pointer',
-              transition: 'background-color 0.15s',
-            }}
+            className={`w-4 h-4 rounded-[3px] border-[1.5px] border-border-default flex-shrink-0 inline-block cursor-pointer transition-colors ${
+              active.includes(option) ? 'bg-accent' : 'bg-bg-card'
+            }`}
           />
-          <span
-            style={{
-              color: '#8B8B90',
-              fontSize: '14px',
-              fontFamily: 'var(--font-inter), Inter, sans-serif',
-            }}
-          >
+          <span className="text-text-secondary text-sm">
             {option}
           </span>
         </label>

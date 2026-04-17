@@ -5,53 +5,24 @@ import { XCircle } from 'lucide-react'
 
 export default function CheckoutCancelPage() {
   return (
-    <div style={{ backgroundColor: '#0A0A0B', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' }}>
-      <div style={{
-        backgroundColor: '#141417',
-        border: '1px solid #1F1F23',
-        borderRadius: '16px',
-        padding: '48px',
-        maxWidth: '480px',
-        width: '100%',
-        textAlign: 'center',
-      }}>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
-          <XCircle size={56} style={{ color: '#EF4444' }} />
+    <div className="bg-bg-base min-h-screen flex items-center justify-center px-5 py-10">
+      <div className="bg-bg-card border border-border-default rounded-2xl p-12 max-w-[480px] w-full text-center">
+        <div className="flex flex-col items-center gap-6">
+          <XCircle size={56} className="text-[#EF4444]" />
 
           <div>
-            <h1 style={{
-              fontFamily: 'var(--font-instrument-serif), Georgia, serif',
-              fontSize: '28px',
-              color: '#FFFFFF',
-              fontWeight: '400',
-              margin: '0 0 8px',
-            }}>
+            <h1 className="font-serif text-[28px] text-text-primary font-normal m-0 mb-2">
               Payment Cancelled
             </h1>
-            <p style={{ color: '#8B8B90', fontSize: '14px', fontFamily: 'var(--font-inter), Inter, sans-serif', margin: 0 }}>
+            <p className="text-text-secondary text-sm m-0">
               Your payment was not processed. No charges were made.
             </p>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
+          <div className="flex flex-col gap-3 w-full">
             <Link
               href="/browse"
-              style={{
-                padding: '14px',
-                backgroundColor: '#FF5C00',
-                color: '#FFFFFF',
-                borderRadius: '8px',
-                border: 'none',
-                fontSize: '15px',
-                fontWeight: '600',
-                textDecoration: 'none',
-                fontFamily: 'var(--font-inter), Inter, sans-serif',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                transition: 'background-color 0.15s',
-              }}
+              className="px-0 py-[14px] bg-accent hover:bg-accent-hover text-text-primary rounded-lg text-[15px] font-semibold no-underline flex items-center justify-center gap-2 transition-colors"
             >
               Browse Templates
             </Link>

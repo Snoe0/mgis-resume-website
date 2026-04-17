@@ -21,44 +21,26 @@ const fields = [
   { key: 'dribbbleUrl' as const, label: 'Dribbble or Behance', icon: Palette, placeholder: 'https://dribbble.com/yourname' },
 ]
 
-export default function StepLinks({ data, onChange, onNext, onBack }: StepLinksProps) {
-  const inputStyle = {
-    width: '100%',
-    padding: '12px 16px 12px 44px',
-    backgroundColor: '#0A0A0B',
-    border: '1px solid #1F1F23',
-    borderRadius: '8px',
-    color: '#FFFFFF',
-    fontSize: '14px',
-    fontFamily: 'var(--font-inter), Inter, sans-serif',
-    outline: 'none',
-  } as const
+const INPUT_CLASS = 'w-full py-3 pr-4 pl-11 bg-bg-base border border-border-default rounded-lg text-text-primary text-sm outline-none'
 
+export default function StepLinks({ data, onChange, onNext, onBack }: StepLinksProps) {
   return (
     <div>
-      <h2
-        style={{
-          fontFamily: 'var(--font-instrument-serif), Georgia, serif',
-          fontSize: '28px',
-          color: '#FFFFFF',
-          fontWeight: 400,
-          margin: '0 0 8px',
-        }}
-      >
+      <h2 className="font-serif text-[28px] text-text-primary font-normal m-0 mb-2">
         Portfolio & links
       </h2>
-      <p style={{ color: '#8B8B90', fontSize: '14px', margin: '0 0 32px' }}>
+      <p className="text-text-secondary text-sm m-0 mb-8">
         Sharing your portfolio helps buyers trust your work. All fields are optional.
       </p>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      <div className="flex flex-col gap-5">
         {fields.map(({ key, label, icon: Icon, placeholder }) => (
           <div key={key}>
-            <label style={{ color: '#8B8B90', fontSize: '13px', display: 'block', marginBottom: '8px', fontFamily: 'var(--font-inter), Inter, sans-serif' }}>
+            <label className="text-text-secondary text-[13px] block mb-2">
               {label}
             </label>
-            <div style={{ position: 'relative' }}>
-              <div style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: '#6B6B70', pointerEvents: 'none' }}>
+            <div className="relative">
+              <div className="absolute left-[14px] top-1/2 -translate-y-1/2 text-text-muted pointer-events-none">
                 <Icon size={16} />
               </div>
               <input
@@ -66,7 +48,7 @@ export default function StepLinks({ data, onChange, onNext, onBack }: StepLinksP
                 value={data[key]}
                 onChange={(e) => onChange({ [key]: e.target.value })}
                 placeholder={placeholder}
-                style={inputStyle}
+                className={INPUT_CLASS}
               />
             </div>
           </div>
@@ -74,33 +56,16 @@ export default function StepLinks({ data, onChange, onNext, onBack }: StepLinksP
       </div>
 
       {/* Navigation */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '40px' }}>
+      <div className="flex justify-between mt-10">
         <button
           onClick={onBack}
-          style={{
-            color: '#8B8B90',
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            fontSize: '14px',
-            fontFamily: 'var(--font-inter), Inter, sans-serif',
-          }}
+          className="text-text-secondary bg-transparent border-none cursor-pointer text-sm"
         >
           Back
         </button>
         <button
           onClick={onNext}
-          style={{
-            padding: '12px 32px',
-            backgroundColor: '#FF5C00',
-            color: '#FFFFFF',
-            borderRadius: '8px',
-            border: 'none',
-            fontSize: '14px',
-            fontWeight: 600,
-            cursor: 'pointer',
-            fontFamily: 'var(--font-inter), Inter, sans-serif',
-          }}
+          className="px-8 py-3 bg-accent text-text-primary rounded-lg border-none text-sm font-semibold cursor-pointer"
         >
           Continue
         </button>

@@ -13,6 +13,8 @@ const specialties = [
   'Other',
 ]
 
+const INPUT_CLASS = 'w-full px-4 py-3 bg-bg-base border border-border-default rounded-lg text-text-primary text-sm outline-none'
+
 interface StepProfileProps {
   data: {
     displayName: string
@@ -53,56 +55,25 @@ export default function StepProfile({ data, onChange, onNext, onBack }: StepProf
     if (validate()) onNext()
   }
 
-  const inputStyle = {
-    width: '100%',
-    padding: '12px 16px',
-    backgroundColor: '#0A0A0B',
-    border: '1px solid #1F1F23',
-    borderRadius: '8px',
-    color: '#FFFFFF',
-    fontSize: '14px',
-    fontFamily: 'var(--font-inter), Inter, sans-serif',
-    outline: 'none',
-  } as const
-
   return (
     <div>
-      <h2
-        style={{
-          fontFamily: 'var(--font-instrument-serif), Georgia, serif',
-          fontSize: '28px',
-          color: '#FFFFFF',
-          fontWeight: 400,
-          margin: '0 0 8px',
-        }}
-      >
+      <h2 className="font-serif text-[28px] text-text-primary font-normal m-0 mb-2">
         Set up your profile
       </h2>
-      <p style={{ color: '#8B8B90', fontSize: '14px', margin: '0 0 32px' }}>
+      <p className="text-text-secondary text-sm m-0 mb-8">
         This is how buyers will see you on ResumeForge.
       </p>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      <div className="flex flex-col gap-6">
         {/* Avatar */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <div className="flex items-center gap-4">
           <div
             onClick={() => fileRef.current?.click()}
-            style={{
-              width: '72px',
-              height: '72px',
-              borderRadius: '50%',
-              backgroundColor: '#1F1F23',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              overflow: 'hidden',
-              border: '2px dashed #1F1F23',
-              flexShrink: 0,
-            }}
+            className="w-[72px] h-[72px] rounded-full bg-border-default flex items-center justify-center cursor-pointer overflow-hidden border-2 border-dashed border-border-default flex-shrink-0"
           >
             {avatarPreview ? (
-              <img src={avatarPreview} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" />
             ) : (
               <Camera size={24} color="#6B6B70" />
             )}
@@ -111,25 +82,18 @@ export default function StepProfile({ data, onChange, onNext, onBack }: StepProf
             <button
               type="button"
               onClick={() => fileRef.current?.click()}
-              style={{
-                color: '#FF5C00',
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: '14px',
-                fontFamily: 'var(--font-inter), Inter, sans-serif',
-              }}
+              className="text-accent bg-transparent border-none cursor-pointer text-sm"
             >
               Upload photo
             </button>
-            <p style={{ color: '#6B6B70', fontSize: '12px', margin: '4px 0 0' }}>Optional. JPG, PNG, or WebP.</p>
+            <p className="text-text-muted text-xs mt-1 mb-0">Optional. JPG, PNG, or WebP.</p>
           </div>
-          <input ref={fileRef} type="file" accept="image/*" onChange={handleAvatarChange} style={{ display: 'none' }} />
+          <input ref={fileRef} type="file" accept="image/*" onChange={handleAvatarChange} className="hidden" />
         </div>
 
         {/* Display Name */}
         <div>
-          <label style={{ color: '#8B8B90', fontSize: '13px', display: 'block', marginBottom: '8px', fontFamily: 'var(--font-inter), Inter, sans-serif' }}>
+          <label className="text-text-secondary text-[13px] block mb-2">
             Display name *
           </label>
           <input
@@ -137,14 +101,14 @@ export default function StepProfile({ data, onChange, onNext, onBack }: StepProf
             value={data.displayName}
             onChange={(e) => onChange({ displayName: e.target.value })}
             placeholder="How buyers will see your name"
-            style={inputStyle}
+            className={INPUT_CLASS}
           />
-          {errors.displayName && <p style={{ color: '#EF4444', fontSize: '12px', marginTop: '6px' }}>{errors.displayName}</p>}
+          {errors.displayName && <p className="text-[#EF4444] text-xs mt-1.5">{errors.displayName}</p>}
         </div>
 
         {/* Bio */}
         <div>
-          <label style={{ color: '#8B8B90', fontSize: '13px', display: 'block', marginBottom: '8px', fontFamily: 'var(--font-inter), Inter, sans-serif' }}>
+          <label className="text-text-secondary text-[13px] block mb-2">
             Bio *
           </label>
           <textarea
@@ -152,61 +116,44 @@ export default function StepProfile({ data, onChange, onNext, onBack }: StepProf
             onChange={(e) => onChange({ bio: e.target.value.slice(0, 500) })}
             placeholder="Tell buyers about your design experience and style..."
             rows={4}
-            style={{ ...inputStyle, resize: 'vertical' }}
+            className={`${INPUT_CLASS} resize-y`}
           />
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '6px' }}>
-            {errors.bio ? <p style={{ color: '#EF4444', fontSize: '12px', margin: 0 }}>{errors.bio}</p> : <span />}
-            <span style={{ color: '#6B6B70', fontSize: '12px' }}>{data.bio.length}/500</span>
+          <div className="flex justify-between mt-1.5">
+            {errors.bio ? <p className="text-[#EF4444] text-xs m-0">{errors.bio}</p> : <span />}
+            <span className="text-text-muted text-xs">{data.bio.length}/500</span>
           </div>
         </div>
 
         {/* Specialty */}
         <div>
-          <label style={{ color: '#8B8B90', fontSize: '13px', display: 'block', marginBottom: '8px', fontFamily: 'var(--font-inter), Inter, sans-serif' }}>
+          <label className="text-text-secondary text-[13px] block mb-2">
             Specialty *
           </label>
           <select
             value={data.specialty}
             onChange={(e) => onChange({ specialty: e.target.value })}
-            style={{ ...inputStyle, cursor: 'pointer', appearance: 'none' }}
+            className={`${INPUT_CLASS} cursor-pointer appearance-none`}
           >
             <option value="">Select a specialty</option>
             {specialties.map((s) => (
               <option key={s} value={s}>{s}</option>
             ))}
           </select>
-          {errors.specialty && <p style={{ color: '#EF4444', fontSize: '12px', marginTop: '6px' }}>{errors.specialty}</p>}
+          {errors.specialty && <p className="text-[#EF4444] text-xs mt-1.5">{errors.specialty}</p>}
         </div>
       </div>
 
       {/* Navigation */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '40px' }}>
+      <div className="flex justify-between mt-10">
         <button
           onClick={onBack}
-          style={{
-            color: '#8B8B90',
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            fontSize: '14px',
-            fontFamily: 'var(--font-inter), Inter, sans-serif',
-          }}
+          className="text-text-secondary bg-transparent border-none cursor-pointer text-sm"
         >
           Back
         </button>
         <button
           onClick={handleNext}
-          style={{
-            padding: '12px 32px',
-            backgroundColor: '#FF5C00',
-            color: '#FFFFFF',
-            borderRadius: '8px',
-            border: 'none',
-            fontSize: '14px',
-            fontWeight: 600,
-            cursor: 'pointer',
-            fontFamily: 'var(--font-inter), Inter, sans-serif',
-          }}
+          className="px-8 py-3 bg-accent text-text-primary rounded-lg border-none text-sm font-semibold cursor-pointer"
         >
           Continue
         </button>

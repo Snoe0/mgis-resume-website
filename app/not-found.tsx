@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import { FileQuestion, Home, LayoutGrid } from 'lucide-react'
 
 export default function NotFound() {
   return (
@@ -8,93 +9,47 @@ export default function NotFound() {
       <Header />
       <main
         aria-labelledby="not-found-heading"
-        style={{
-          minHeight: 'calc(100vh - 140px)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: '#0A0A0B',
-          padding: '80px',
-        }}
+        className="min-h-[calc(100vh-140px)] flex items-center justify-center bg-bg-base px-6 py-20"
       >
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            textAlign: 'center',
-            gap: '16px',
-            maxWidth: '480px',
-          }}
-        >
+        <div className="flex flex-col items-center text-center gap-6 max-w-lg">
+          {/* Icon */}
+          <div className="w-20 h-20 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center mb-2">
+            <FileQuestion className="w-10 h-10 text-accent" />
+          </div>
+
           {/* 404 number */}
-          <span
-            style={{
-              fontFamily: 'var(--font-instrument-serif), Georgia, serif',
-              fontSize: '9rem',
-              lineHeight: 1,
-              color: '#FF5C00',
-            }}
-          >
+          <span className="font-serif text-[9rem] leading-none text-accent tracking-tight">
             404
           </span>
 
           {/* Heading */}
           <h1
             id="not-found-heading"
-            style={{
-              fontSize: '1.75rem',
-              fontWeight: 600,
-              color: '#FFFFFF',
-              margin: 0,
-            }}
+            className="text-3xl font-semibold text-text-primary"
           >
             Page not found
           </h1>
 
           {/* Body */}
-          <p
-            style={{
-              fontSize: '1rem',
-              color: '#8B8B90',
-              lineHeight: 1.6,
-              margin: '0 0 8px',
-            }}
-          >
+          <p className="text-base text-text-secondary leading-relaxed max-w-sm">
             The page you&apos;re looking for doesn&apos;t exist or has been moved.
+            Let&apos;s get you back on track.
           </p>
 
           {/* CTAs */}
-          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
+          <div className="flex gap-3 flex-wrap justify-center mt-2">
             <Link
               href="/"
-              style={{
-                display: 'inline-block',
-                padding: '12px 24px',
-                backgroundColor: '#FF5C00',
-                color: '#FFFFFF',
-                borderRadius: '8px',
-                fontWeight: 600,
-                fontSize: '0.9rem',
-                textDecoration: 'none',
-              }}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-white rounded-lg font-semibold text-sm hover:bg-[#e05200] transition-colors"
             >
+              <Home className="w-4 h-4" />
               Go Home
             </Link>
             <Link
               href="/browse"
-              style={{
-                display: 'inline-block',
-                padding: '12px 24px',
-                backgroundColor: 'transparent',
-                color: '#FFFFFF',
-                borderRadius: '8px',
-                fontWeight: 600,
-                fontSize: '0.9rem',
-                textDecoration: 'none',
-                border: '1px solid #1F1F23',
-              }}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-transparent text-white rounded-lg font-semibold text-sm border border-border-default hover:border-text-muted transition-colors"
             >
+              <LayoutGrid className="w-4 h-4" />
               Browse Templates
             </Link>
           </div>

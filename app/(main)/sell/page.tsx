@@ -44,25 +44,21 @@ export default function SellPage() {
 
   if (loading) {
     return (
-      <div style={{ backgroundColor: '#0A0A0B', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ color: '#8B8B90', fontSize: '14px' }}>Loading...</p>
+      <div className="bg-bg-base min-h-screen flex items-center justify-center">
+        <p className="text-text-secondary text-sm">Loading...</p>
       </div>
     )
   }
 
   return (
-    <div style={{ backgroundColor: '#0A0A0B', minHeight: '100vh', padding: '60px 24px 80px' }}>
-      <div style={{ maxWidth: '640px', margin: '0 auto' }}>
+    <div className="bg-bg-base min-h-screen px-6 pt-[60px] pb-20">
+      <div className="max-w-[640px] mx-auto">
+        <h1 className="font-serif text-4xl text-text-primary font-normal m-0 mb-6 text-center">
+          Become a ResumeForge Creator
+        </h1>
         <ProgressBar currentStep={step} />
 
-        <div
-          style={{
-            backgroundColor: '#141417',
-            border: '1px solid #1F1F23',
-            borderRadius: '12px',
-            padding: '40px',
-          }}
-        >
+        <div className="bg-bg-card border border-border-default rounded-xl p-10">
           {step === 1 && (
             <StepAccount onNext={() => setStep(2)} />
           )}
