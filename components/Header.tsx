@@ -18,7 +18,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 bg-bg-elevated border-b border-border-default">
-      <div className="container-page h-16 flex items-center justify-between">
+      <div className="w-full px-20 max-md:px-6 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link
           href="/"
@@ -28,10 +28,10 @@ export default function Header() {
           <Image
             src="/logo.png"
             alt="ResumeForge logo"
-            width={32}
-            height={32}
+            width={40}
+            height={40}
             priority
-            className="w-8 h-8 object-contain"
+            className="w-10 h-10 object-contain"
           />
           ResumeForge
         </Link>

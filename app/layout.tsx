@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { Inter, Instrument_Serif } from 'next/font/google'
 import Script from 'next/script'
 import './globals.css'
+import CookieBanner from '@/components/CookieBanner'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -128,6 +129,27 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
 
+        {/* Google Consent Mode v2 defaults — must run before GA/GTM */}
+        <Script
+          id="gtag-consent-default"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            var stored = null;
+            try { stored = localStorage.getItem('rf_cookie_consent'); } catch (e) {}
+            var granted = stored === 'accepted';
+            gtag('consent', 'default', {
+              ad_storage: granted ? 'granted' : 'denied',
+              ad_user_data: granted ? 'granted' : 'denied',
+              ad_personalization: granted ? 'granted' : 'denied',
+              analytics_storage: granted ? 'granted' : 'denied',
+              security_storage: 'granted',
+              wait_for_update: 500
+            });
+          `}}
+        />
+
         {/* Google tag (gtag.js) — G-E41LRQ6G83 */}
         <Script
           id="gtag-script"
@@ -156,6 +178,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         </Script>
         <noscript dangerouslySetInnerHTML={{ __html: `<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-THB6WFRX" height="0" width="0" style="display:none;visibility:hidden"></iframe>` }} />
         {children}
+        <CookieBanner />
       </body>
     </html>
   )
