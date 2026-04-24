@@ -5,12 +5,12 @@ import { ArrowRight, Check } from 'lucide-react'
 export const metadata: Metadata = {
   title: 'Pricing',
   description:
-    'Simple, fair pricing for ResumeForge. Browse free templates, buy individual templates one-time, or join as a creator and keep 80% of every sale.',
+    'Pay only for what you need on ResumeForge. Browse free templates, buy one-off templates at creator-set prices, and pay per credit for AI optimization. No subscriptions.',
   alternates: { canonical: '/pricing' },
   openGraph: {
     title: 'Pricing — ResumeForge',
     description:
-      'Free templates, one-time template purchases, and an 80% creator revenue share. No subscriptions.',
+      'Free templates, creator-priced one-time purchases, and pay-per-credit AI. No subscriptions.',
     url: '/pricing',
     type: 'website',
   },
@@ -18,15 +18,23 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Pricing — ResumeForge',
     description:
-      'Free templates, one-time template purchases, and an 80% creator revenue share. No subscriptions.',
+      'Free templates, creator-priced one-time purchases, and pay-per-credit AI. No subscriptions.',
   },
 }
 
 export default function PricingPage() {
   const faqs = [
     {
+      q: 'Why do template prices vary?',
+      a: 'Creators set their own prices on ResumeForge, starting from $1. Free templates are always free. You pay the creator directly through Stripe — we keep 20% to run the platform.',
+    },
+    {
+      q: 'How do AI credits work?',
+      a: 'AI credits are metered by tokens — $10 per million tokens — so you only pay for the work the model actually does. A typical Optimizer run (tailored resume suggestions plus a personalized cover letter) uses a small fraction of that. Credits never expire, and there is no subscription or auto-renewal.',
+    },
+    {
       q: 'Can I get a refund?',
-      a: 'Yes. If a template is not what you expected or has a defect, email us within 14 days of purchase and we will issue a full refund — no questions asked.',
+      a: 'Yes. If a template is not what you expected or has a defect, email us within 14 days of purchase and we will issue a full refund — no questions asked. Unused AI credits are also refundable on request.',
     },
     {
       q: 'Do I get both PDF and DOCX?',
@@ -50,43 +58,57 @@ export default function PricingPage() {
 
   const tiers = [
     {
-      name: 'Free',
+      name: 'Free Templates',
       price: '$0',
       priceSub: 'forever',
-      desc: 'Browse a curated set of permanently free templates. No credit card required.',
+      desc: 'Browse a curated set of permanently free templates. No account, no credit card.',
       features: [
-        'Access free templates',
         'Full browser-based editor',
-        'PDF export',
-        'No watermark',
+        'PDF export, no watermark',
+        'Unlimited edits',
+        'Always free',
       ],
       cta: { label: 'Browse Free Templates', href: '/browse?filter=free' },
       highlighted: false,
     },
     {
-      name: 'Single Purchase',
-      price: '$18–$29',
-      priceSub: 'per template',
-      desc: 'One-time payment. Lifetime access to the template, PDF + DOCX, and all future updates.',
+      name: 'Premium Templates',
+      price: 'From $1',
+      priceSub: 'one-time, price set by creator',
+      desc: 'Pay only for the template you want. Creators set their own prices — starting from $1.',
       features: [
         'Lifetime access',
         'PDF + DOCX included',
-        'ATS-tested template',
+        'ATS-tested layout',
         'Unlimited edits',
-        'Free updates',
+        'Free future updates',
       ],
       cta: { label: 'Browse Templates', href: '/browse' },
       highlighted: true,
     },
     {
+      name: 'AI Credits',
+      price: '$10',
+      priceSub: 'per million tokens',
+      desc: 'Pay only for the AI you actually use. Credits are metered by tokens, so short jobs cost cents and big jobs stay transparent.',
+      features: [
+        'No subscription',
+        'Credits never expire',
+        'Metered by tokens',
+        'Powers the Optimizer + cover letters',
+      ],
+      cta: { label: 'Try the Optimizer', href: '/optimizer' },
+      highlighted: false,
+    },
+    {
       name: 'Creator',
       price: '$0',
       priceSub: 'to join',
-      desc: 'Sell your templates on ResumeForge. Keep 80% of every sale. No listing fees.',
+      desc: 'Sell your own templates and set your own prices. Keep 80% of every sale — no listing fees.',
       features: [
         'Free to join',
-        'Keep 80% of every sale',
-        'No listing fees',
+        'Set your own prices',
+        'Keep 80% per sale',
         'Monthly payouts',
         'Analytics dashboard',
       ],
@@ -105,20 +127,21 @@ export default function PricingPage() {
       {/* Hero */}
       <section className="container-page pt-[72px] pb-[40px] md:pt-[120px] md:pb-[64px] text-center">
         <span className="inline-flex items-center gap-[8px] px-[16px] py-[6px] bg-[#FF5C0015] border border-[#FF5C0040] rounded-[100px] text-accent text-[13px] font-medium mb-[24px]">
-          ✦ No subscriptions. Ever.
+          ✦ No subscriptions. Pay only for what you need.
         </span>
         <h1 className="font-serif text-[clamp(40px,6vw,64px)] text-text-primary font-normal leading-[1.1] max-w-[720px] mx-auto mt-0 mb-[24px]">
-          Simple, fair pricing
+          Pay only for what you need
         </h1>
-        <p className="text-text-secondary text-[18px] leading-[1.6] max-w-[600px] mx-auto m-0">
-          Pay once for a template you love, or browse dozens of free ones. If
-          you&apos;re a designer, keep 80% of every sale.
+        <p className="text-text-secondary text-[18px] leading-[1.6] max-w-[640px] mx-auto m-0">
+          Free templates are always free. Premium templates are one-time
+          purchases at prices set by the creators. AI features run on credits
+          you buy as you go. No monthly fees, no lock-in.
         </p>
       </section>
 
       {/* Tiers */}
       <section className="px-6 pb-[56px] md:px-[80px] md:pb-[80px] max-w-[1280px] mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-[16px] md:gap-[24px]">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[16px] md:gap-[20px]">
           {tiers.map((tier) => (
             <div
               key={tier.name}
@@ -134,13 +157,13 @@ export default function PricingPage() {
                 <h2 className="text-text-primary text-[18px] font-semibold mt-0 mb-[12px]">
                   {tier.name}
                 </h2>
-                <div className="flex items-baseline gap-[8px] mb-[12px]">
-                  <span className="font-serif text-[40px] text-text-primary leading-none">
+                <div className="mb-[12px]">
+                  <div className="font-serif text-[40px] text-text-primary leading-none mb-[6px]">
                     {tier.price}
-                  </span>
-                  <span className="text-text-secondary text-[13px]">
+                  </div>
+                  <div className="text-text-secondary text-[13px] leading-[1.4]">
                     {tier.priceSub}
-                  </span>
+                  </div>
                 </div>
                 <p className="text-text-secondary text-[14px] leading-[1.6] m-0">
                   {tier.desc}
