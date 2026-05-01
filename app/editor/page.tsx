@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import {
   DndContext,
   closestCenter,
@@ -18,10 +18,11 @@ import {
   arrayMove,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { Undo2, Redo2, Bold, Italic, Underline, Eye, FileDown, Monitor } from 'lucide-react'
+import { Undo2, Redo2, Bold, Italic, Underline, FileDown, Monitor, Upload, Loader2, ChevronDown } from 'lucide-react'
 import type { CSSProperties } from 'react'
 import Link from 'next/link'
 import Header from '@/components/Header'
+import { parseResumePdf } from '@/lib/parseResumePdf'
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -191,6 +192,26 @@ export default function EditorPage() {
   const [fontSize, setFontSize] = useState(13)
   const [layout, setLayout] = useState<'single' | 'two'>('single')
 
+  // ── Upload / parse state ─────────────────────────────────────────────────
+  type Phase = 'upload' | 'parsing' | 'editing'
+  const [phase, setPhase] = useState<Phase>('upload')
+  const [uploadError, setUploadError] = useState<string | null>(null)
+  const [dragOver, setDragOver] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // ── Export dropdown ──────────────────────────────────────────────────────
+  const [exportOpen, setExportOpen] = useState(false)
+  const exportRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!exportOpen) return
+    const close = (e: MouseEvent) => {
+      if (exportRef.current && !exportRef.current.contains(e.target as Node)) setExportOpen(false)
+    }
+    document.addEventListener('mousedown', close)
+    return () => document.removeEventListener('mousedown', close)
+  }, [exportOpen])
+
   // ── DnD ──────────────────────────────────────────────────────────────────
 
   const sensors = useSensors(
@@ -250,9 +271,157 @@ export default function EditorPage() {
   const toggleSection = (id: SectionId) =>
     setSections((p) => p.map((s) => (s.id === id ? { ...s, visible: !s.visible } : s)))
 
+  // ── PDF upload + parse ───────────────────────────────────────────────────
+
+  async function handleUpload(file: File) {
+    const ext = file.name.split('.').pop()?.toLowerCase()
+    if (ext !== 'pdf') {
+      setUploadError('Please upload a PDF file.')
+      return
+    }
+    setUploadError(null)
+    setPhase('parsing')
+    try {
+      const parsed = await parseResumePdf(file)
+
+      // Merge — fall back to placeholder data only when a field came back empty.
+      setResumeData({
+        contact: {
+          name: parsed.contact.name || INITIAL_DATA.contact.name,
+          title: parsed.contact.title || INITIAL_DATA.contact.title,
+          email: parsed.contact.email,
+          phone: parsed.contact.phone,
+          location: parsed.contact.location,
+          linkedin: parsed.contact.linkedin,
+        },
+        experience: parsed.experience.length ? parsed.experience : INITIAL_DATA.experience,
+        education: parsed.education.length ? parsed.education : INITIAL_DATA.education,
+        skills: parsed.skills.length ? parsed.skills : INITIAL_DATA.skills,
+      })
+      setDocName(file.name.replace(/\.pdf$/i, ''))
+      setPhase('editing')
+    } catch (err) {
+      console.error('PDF parse failed:', err)
+      setUploadError('Could not read this PDF. Try a different file or start blank.')
+      setPhase('upload')
+    }
+  }
+
+  function handleFileInput(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (file) handleUpload(file)
+    e.target.value = '' // allow re-selecting the same file
+  }
+
+  function handleDrop(e: React.DragEvent) {
+    e.preventDefault()
+    setDragOver(false)
+    const file = e.dataTransfer.files[0]
+    if (file) handleUpload(file)
+  }
+
+  // ── PDF export ────────────────────────────────────────────────────────────
+
+  async function handleExportPdf() {
+    setExportOpen(false)
+    try {
+      const { jsPDF } = await import('jspdf')
+      const doc = new jsPDF({ unit: 'pt', format: 'letter' }) // 612 × 792pt
+
+      const ff = fontFamily === 'Times New Roman' || fontFamily === 'Instrument Serif' || fontFamily === 'Georgia'
+        ? 'times'
+        : 'helvetica'
+
+      const pageW = doc.internal.pageSize.getWidth()
+      const pageH = doc.internal.pageSize.getHeight()
+      const margin = 52
+      const maxW = pageW - margin * 2
+      let y = margin
+
+      const ensureSpace = (needed: number) => {
+        if (y + needed > pageH - margin) { doc.addPage(); y = margin }
+      }
+
+      const writeWrapped = (text: string, size: number, style: 'normal' | 'bold' = 'normal', color = '#222') => {
+        if (!text) return
+        doc.setFont(ff, style)
+        doc.setFontSize(size)
+        doc.setTextColor(color)
+        const lines = doc.splitTextToSize(text, maxW) as string[]
+        for (const line of lines) {
+          ensureSpace(size * 1.3)
+          doc.text(line, margin, y)
+          y += size * 1.3
+        }
+      }
+
+      const accentRgb = (() => {
+        const h = accentColor.replace('#', '')
+        return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)] as const
+      })()
+
+      // Contact
+      writeWrapped(resumeData.contact.name, fontSize + 14, 'bold', '#0A0A0B')
+      doc.setTextColor(accentRgb[0], accentRgb[1], accentRgb[2])
+      writeWrapped(resumeData.contact.title, fontSize + 1, 'bold', accentColor)
+      const detailRow = [
+        resumeData.contact.email,
+        resumeData.contact.phone,
+        resumeData.contact.location,
+        resumeData.contact.linkedin,
+      ].filter(Boolean).join('  ·  ')
+      writeWrapped(detailRow, fontSize - 1, 'normal', '#666')
+      y += 6
+
+      for (const sec of sections) {
+        if (!sec.visible || sec.id === 'contact') continue
+        ensureSpace(28)
+        // Accent divider
+        doc.setDrawColor(accentRgb[0], accentRgb[1], accentRgb[2])
+        doc.setLineWidth(1.2)
+        doc.line(margin, y, pageW - margin, y)
+        y += 14
+
+        if (sec.id === 'experience') {
+          writeWrapped('EXPERIENCE', fontSize - 2, 'bold', '#444')
+          y += 4
+          for (const e of resumeData.experience) {
+            const head = [e.role, e.company].filter(Boolean).join(' — ')
+            writeWrapped(head, fontSize, 'bold', '#111')
+            if (e.period) writeWrapped(e.period, fontSize - 1, 'normal', '#777')
+            if (e.description) writeWrapped(e.description, fontSize - 1, 'normal', '#555')
+            y += 6
+          }
+        }
+
+        if (sec.id === 'education') {
+          writeWrapped('EDUCATION', fontSize - 2, 'bold', '#444')
+          y += 4
+          for (const e of resumeData.education) {
+            writeWrapped(e.degree, fontSize, 'bold', '#111')
+            if (e.school) writeWrapped(e.school, fontSize - 1, 'normal', '#555')
+            if (e.period) writeWrapped(e.period, fontSize - 1, 'normal', '#777')
+            y += 6
+          }
+        }
+
+        if (sec.id === 'skills') {
+          writeWrapped('SKILLS', fontSize - 2, 'bold', '#444')
+          y += 4
+          writeWrapped(resumeData.skills.join(', '), fontSize - 1, 'normal', '#555')
+        }
+      }
+
+      doc.save(`${resumeData.contact.name || 'resume'}.pdf`)
+    } catch (err) {
+      console.error('PDF export failed:', err)
+    }
+  }
+
   // ── DOCX export ───────────────────────────────────────────────────────────
 
   async function handleExportDocx() {
+    setExportOpen(false)
     try {
       const { Document, Packer, Paragraph, TextRun } = await import('docx')
       const { saveAs } = await import('file-saver')
@@ -614,6 +783,65 @@ export default function EditorPage() {
       {/* Site header — navigation */}
       <Header />
 
+      {/* Upload gate */}
+      {phase !== 'editing' && (
+        <main className="flex-1 flex items-center justify-center px-6">
+          <div className="bg-bg-card border border-border-default rounded-2xl p-12 max-w-[520px] w-full flex flex-col items-center gap-5 text-center">
+            <div className="w-14 h-14 rounded-2xl bg-[#FF5C0020] flex items-center justify-center">
+              {phase === 'parsing' ? <Loader2 size={26} className="text-accent animate-spin" /> : <Upload size={26} color="#FF5C00" />}
+            </div>
+            <div className="flex flex-col gap-2">
+              <h2 className="font-serif text-[26px] text-text-primary font-normal m-0">
+                {phase === 'parsing' ? 'Reading your resume…' : 'Upload your resume'}
+              </h2>
+              <p className="text-text-secondary text-[14px] leading-relaxed m-0">
+                {phase === 'parsing'
+                  ? 'Extracting text and matching it to editor fields.'
+                  : 'Drop a PDF and we’ll parse it into editable fields. Anything we miss, you can fix in the editor.'}
+              </p>
+            </div>
+
+            {phase === 'upload' && (
+              <>
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  onDragOver={(e) => { e.preventDefault(); setDragOver(true) }}
+                  onDragLeave={() => setDragOver(false)}
+                  onDrop={handleDrop}
+                  className={`w-full p-8 border-[1.5px] border-dashed rounded-xl flex flex-col items-center gap-3 cursor-pointer transition-colors ${
+                    dragOver ? 'border-accent' : 'border-border-default hover:border-accent'
+                  }`}
+                >
+                  <Upload size={22} color="#6B6B70" />
+                  <div className="flex flex-col gap-1">
+                    <span className="text-text-primary text-sm font-medium">Drop your resume here</span>
+                    <span className="text-text-muted text-xs">PDF · up to 5MB</span>
+                  </div>
+                </div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".pdf,application/pdf"
+                  onChange={handleFileInput}
+                  className="hidden"
+                />
+                {uploadError && (
+                  <p className="text-[#EF4444] text-xs m-0">{uploadError}</p>
+                )}
+                <button
+                  onClick={() => setPhase('editing')}
+                  className="bg-transparent border-none text-text-secondary text-[13px] cursor-pointer underline"
+                >
+                  Or start with a blank resume
+                </button>
+              </>
+            )}
+          </div>
+        </main>
+      )}
+
+      {phase === 'editing' && <>
+
       {/* Editor toolbar */}
       <div className="h-[52px] bg-bg-elevated border-b border-border-default flex items-center px-5 gap-3 flex-shrink-0">
         {/* Undo / Redo */}
@@ -646,18 +874,31 @@ export default function EditorPage() {
           <button className={TOOLBAR_BTN_CLASS} title="Underline"><Underline size={14} /></button>
         </div>
 
-        {/* Preview */}
-        <button className="px-3 py-1.5 bg-transparent border border-border-default rounded-md text-text-secondary text-[13px] cursor-pointer flex items-center gap-1.5 flex-shrink-0">
-          <Eye size={13} /> Preview
-        </button>
-
-        {/* Export DOCX */}
-        <button
-          onClick={handleExportDocx}
-          className="px-3.5 py-1.5 bg-accent hover:bg-accent-hover border-none rounded-md text-text-primary text-[13px] font-semibold cursor-pointer flex items-center gap-1.5 transition-colors flex-shrink-0"
-        >
-          <FileDown size={13} /> Export DOCX
-        </button>
+        {/* Export dropdown */}
+        <div className="relative flex-shrink-0" ref={exportRef}>
+          <button
+            onClick={() => setExportOpen((p) => !p)}
+            className="px-3.5 py-1.5 bg-accent hover:bg-accent-hover border-none rounded-md text-text-primary text-[13px] font-semibold cursor-pointer flex items-center gap-1.5 transition-colors"
+          >
+            <FileDown size={13} /> Export <ChevronDown size={12} />
+          </button>
+          {exportOpen && (
+            <div className="absolute right-0 top-full mt-1 w-36 bg-bg-elevated border border-border-default rounded-md shadow-lg overflow-hidden z-20">
+              <button
+                onClick={handleExportPdf}
+                className="w-full px-3 py-2 bg-transparent border-none text-left text-text-primary text-[13px] cursor-pointer hover:bg-bg-card"
+              >
+                PDF
+              </button>
+              <button
+                onClick={handleExportDocx}
+                className="w-full px-3 py-2 bg-transparent border-none text-left text-text-primary text-[13px] cursor-pointer hover:bg-bg-card"
+              >
+                DOCX
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Three-panel body */}
@@ -815,6 +1056,7 @@ export default function EditorPage() {
           </div>
         </aside>
       </div>
+      </>}
       </div>
     </>
   )

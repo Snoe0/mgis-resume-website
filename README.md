@@ -1,120 +1,136 @@
-# ResumeForge - Resume Template Marketplace
+# ResumeForge — Resume Template Marketplace
 
-A modern, professional web application for browsing, purchasing, and customizing resume templates. Built with Next.js 14, TypeScript, and Tailwind CSS.
+A modern marketplace for browsing, purchasing, and customizing resume templates, with a built-in PDF editor and AI-powered resume optimizer. Built with **Next.js 16** (App Router), **TypeScript**, **Tailwind CSS v4**, **Stripe**, and **Supabase**.
 
 ## Features
 
 ### Pages
 
-1. **Homepage** - SEO-optimized landing page with hero section, featured templates, how it works, benefits, creator CTA, and FAQ
-2. **Browse/Marketplace** - Template discovery with advanced filtering (industry, experience level, style, price)
-3. **Template Detail** - Detailed template preview with reviews, creator info, and purchase options
-4. **PDF Editor** - Interactive resume editor mockup with section management and formatting tools
-5. **Resume Reviewer** - AI-powered resume review tool with suggestions and improvements
-6. **Creator Profile** - Designer portfolio pages with stats, templates, and reviews
+| Route | Purpose |
+|-------|---------|
+| `/` | SEO-optimized landing page — hero, featured templates, how it works, FAQ |
+| `/browse` | Template marketplace with live data from Supabase and PDF previews |
+| `/template/[id]` | Template detail page with real PDF preview from Supabase |
+| `/editor` | Interactive resume editor (desktop-only) with section management, drag-and-drop, and DOCX/PDF export |
+| `/optimizer` | AI-powered resume optimizer — upload a PDF, get suggestions |
+| `/sell` | Seller onboarding for creators uploading templates |
+| `/pricing` | Pay-for-what-you-need pricing tiers |
+| `/about`, `/contact` | Marketing pages |
+| `/privacy`, `/terms` | Legal pages |
+| `/checkout/success`, `/checkout/cancel` | Stripe Checkout return pages |
 
-### Design System
+### API Routes
 
-- **Light mode default** with clean white and soft-gray backgrounds
-- **Inter font family** for modern, professional typography
-- **Professional blue accent color** used sparingly for CTAs
-- **Generous whitespace** throughout for breathing room
-- **Minimal borders and soft shadows** for subtle depth
-- **Smooth transitions** on all interactive elements
-- **Fully responsive** for desktop, tablet, and mobile
+| Route | Method | Purpose |
+|-------|--------|---------|
+| `/api/checkout` | POST | Creates a Stripe Checkout Session for a template |
+| `/api/checkout/verify` | GET | Verifies a Stripe session (used by success page) |
+| `/api/webhooks/stripe` | POST | Stripe webhook — writes completed orders to Supabase |
+
+### Highlights
+
+- **Real Stripe Checkout** in sandbox/test mode — free templates bypass Stripe and go straight to success
+- **Supabase**-backed orders, auth (seller onboarding), and template storage
+- **PDF previews** rendered client-side via `pdfjs-dist` with canvas thumbnails at 3× resolution
+- **Resume export** as PDF (`jspdf`) or DOCX (`docx` + `file-saver`)
+- **Drag-and-drop** section reordering in the editor via `@dnd-kit`
+- **Framer Motion** scroll-in animations on the landing page
+- **Cookie banner** + Google Tag Manager (`GTM-THB6WFRX`) for analytics consent
+- **Mobile responsive** marketing pages; editor is desktop-only by design
+- **SEO**: sitemap, robots, manifest, structured data, OG metadata
 
 ## Tech Stack
 
-- **Next.js 14** with App Router
-- **TypeScript** for type safety
-- **Tailwind CSS** for styling
+- **Next.js 16** (App Router) + **React 19**
+- **TypeScript**
+- **Tailwind CSS v4**
+- **Stripe** (`stripe`, `@stripe/stripe-js`)
+- **Supabase** (`@supabase/supabase-js`)
+- **pdfjs-dist** for PDF rendering
+- **docx**, **jspdf**, **file-saver** for resume export
+- **@dnd-kit** for drag-and-drop
+- **Framer Motion** for animations
 - **Lucide React** for icons
 
 ## Getting Started
 
-### Installation
-
 ```bash
 npm install
+npm run dev      # http://localhost:3000
+npm run build    # production build
+npm run start    # start production server
+npm run lint     # ESLint via Next.js
 ```
 
-### Development
+### Environment Variables
 
-```bash
-npm run dev
+Copy `.env.local.example` to `.env.local` and fill in:
+
+```
+STRIPE_SECRET_KEY=sk_test_...
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+SUPABASE_URL=...
+SUPABASE_SERVICE_ROLE_KEY=...
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_ANON_KEY=...
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to view the application.
-
-### Build
-
-```bash
-npm run build
-npm start
-```
+Use Stripe test card `4242 4242 4242 4242` for purchases.
 
 ## Project Structure
 
 ```
-├── app/
-│   ├── page.tsx              # Homepage
-│   ├── browse/
-│   │   └── page.tsx          # Template marketplace
-│   ├── template/
-│   │   └── [id]/
-│   │       └── page.tsx      # Template detail page
-│   ├── editor/
-│   │   └── page.tsx          # PDF editor mockup
-│   ├── reviewer/
-│   │   └── page.tsx          # Resume reviewer
-│   ├── creator/
-│   │   └── [id]/
-│   │       └── page.tsx      # Creator profile
-│   ├── layout.tsx            # Root layout with header/footer
-│   └── globals.css           # Global styles
-├── components/
-│   ├── Header.tsx            # Navigation header
-│   ├── Footer.tsx            # Site footer
-│   ├── TemplateCard.tsx      # Template preview card
-│   └── FAQSection.tsx        # FAQ accordion
-├── public/                   # Static assets
-├── tailwind.config.ts        # Tailwind configuration
-├── tsconfig.json             # TypeScript configuration
-└── next.config.js            # Next.js configuration
+app/
+├── page.tsx                    # Homepage
+├── layout.tsx                  # Root layout (Header, Footer, GTM, fonts)
+├── globals.css                 # Tailwind v4 theme + design tokens
+├── sitemap.ts, robots.ts, manifest.ts
+├── not-found.tsx
+├── editor/page.tsx             # PDF editor (desktop-only)
+├── reviewer/page.tsx
+├── (main)/                     # Auth-wrapped marketing routes
+│   ├── layout.tsx              # AuthProvider wrapper
+│   ├── page.tsx
+│   ├── about/, contact/, pricing/
+│   ├── privacy/, terms/
+│   ├── browse/, template/[id]/
+│   ├── optimizer/, sell/
+│   └── checkout/{success,cancel}/
+└── api/
+    ├── checkout/route.ts
+    ├── checkout/verify/route.ts
+    └── webhooks/stripe/route.ts
+
+components/
+├── Header.tsx, Footer.tsx
+├── TemplateCard.tsx
+├── PdfThumbnail.tsx            # Canvas-rendered PDF previews
+├── AuthProvider.tsx            # Supabase auth context
+└── CookieBanner.tsx
+
+lib/
+├── templates.ts                # Template data + getTemplateById()
+├── stripe.ts, stripe-client.ts
+├── supabase.ts, supabase-browser.ts
+└── parseResumePdf.ts           # PDF text extraction for the optimizer
 ```
 
-## Key Features
+`@/` is aliased to the project root.
 
-### Component Highlights
+## Design System
 
-- **Reusable TemplateCard** component with hover states and rating display
-- **Responsive Header** with mobile menu
-- **Filter System** on browse page with mobile-friendly modal
-- **Interactive Editor UI** with section management and formatting toolbar
-- **AI Review Interface** with accept/reject suggestion workflow
-- **Professional Creator Profiles** with stats and social proof
+Defined in `app/globals.css` via Tailwind v4 `@theme`:
 
-### Design Principles
-
-- Clean, minimal UI that feels premium and trustworthy
-- Strong contrast and typography hierarchy for readability
-- Subtle motion design with smooth transitions
-- Mobile-first responsive design
-- Accessible with proper ARIA labels and keyboard navigation
-- Performance-optimized with lazy loading considerations
-
-## Notes
-
-This is a **UI-only implementation** with no backend functionality. All data is mocked with placeholder content. To make this production-ready, you would need to:
-
-1. Connect to a backend API for template data
-2. Implement authentication and user accounts
-3. Add payment processing integration
-4. Build the actual PDF editor functionality
-5. Integrate AI services for resume review
-6. Add image uploads and processing
-7. Implement search functionality
+- **Backgrounds**: `#0A0A0B` (base), `#111113` (elevated), `#141417` (cards)
+- **Borders**: `#1F1F23`
+- **Accent**: `#FF5C00` (orange CTAs), `#8B5CF6` (purple secondary)
+- **Text**: `#FFFFFF` / `#8B8B90` / `#6B6B70`
+- **Fonts**: Instrument Serif (headings), Inter (UI/body)
+- **Container**: `max-width: 1280px`, `padding: 0 80px`
+- **Cards**: `rounded-xl`, orange border + `translateY(-2px)` on hover
 
 ## License
 
-This project is for demonstration purposes.
+MIT — see repository for details.
