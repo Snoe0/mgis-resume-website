@@ -22,7 +22,7 @@ import { Undo2, Redo2, Bold, Italic, Underline, FileDown, Monitor, Upload, Loade
 import type { CSSProperties } from 'react'
 import Link from 'next/link'
 import Header from '@/components/Header'
-import { parseResumePdf } from '@/lib/parseResumePdf'
+import { loadPdfDocument, type ImportedDoc, type PageDoc, type TextBlock } from '@/lib/loadPdfDocument'
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -166,6 +166,195 @@ function SortableSectionRow({
   )
 }
 
+// ─── Imported PDF view ────────────────────────────────────────────────────────
+
+const IMPORTED_PAGE_SCALE = 1.4 // 1pt → 1.4px on screen (US Letter ≈ 857×1109px)
+
+function ImportedPageCanvas({
+  page,
+  pageIndex,
+  selectedBlockId,
+  setSelectedBlockId,
+  onChangeBlock,
+  onDeleteBlock,
+}: {
+  page: PageDoc
+  pageIndex: number
+  selectedBlockId: string | null
+  setSelectedBlockId: (id: string | null) => void
+  onChangeBlock: (pageIndex: number, blockId: string, patch: Partial<TextBlock>) => void
+  onDeleteBlock: (pageIndex: number, blockId: string) => void
+}) {
+  const scale = IMPORTED_PAGE_SCALE
+  return (
+    <div
+      className="relative bg-white flex-shrink-0 shadow-[0_8px_40px_rgba(0,0,0,0.6)]"
+      style={{ width: page.width * scale, height: page.height * scale }}
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) setSelectedBlockId(null)
+      }}
+    >
+      {/* Original page raster — preserves graphics, lines, images. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={page.bgDataUrl}
+        alt=""
+        draggable={false}
+        className="absolute inset-0 w-full h-full pointer-events-none select-none"
+      />
+
+      {page.blocks.map((b) => (
+        <EditableBlock
+          key={b.id}
+          block={b}
+          scale={scale}
+          selected={selectedBlockId === b.id}
+          onSelect={() => setSelectedBlockId(b.id)}
+          onChange={(patch) => onChangeBlock(pageIndex, b.id, patch)}
+          onDelete={() => onDeleteBlock(pageIndex, b.id)}
+        />
+      ))}
+    </div>
+  )
+}
+
+function EditableBlock({
+  block,
+  scale,
+  selected,
+  onSelect,
+  onChange,
+  onDelete,
+}: {
+  block: TextBlock
+  scale: number
+  selected: boolean
+  onSelect: () => void
+  onChange: (patch: Partial<TextBlock>) => void
+  onDelete: () => void
+}) {
+  const [editing, setEditing] = useState(false)
+  const editRef = useRef<HTMLDivElement | null>(null)
+  const dragRef = useRef<{ startX: number; startY: number; origX: number; origY: number; moved: boolean } | null>(null)
+
+  // Focus the contentEditable div when entering edit mode and select-all so
+  // typing immediately replaces — common UX for free-form text editors.
+  useEffect(() => {
+    if (editing && editRef.current) {
+      editRef.current.focus()
+      const range = document.createRange()
+      range.selectNodeContents(editRef.current)
+      const sel = window.getSelection()
+      sel?.removeAllRanges()
+      sel?.addRange(range)
+    }
+  }, [editing])
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (editing) return
+    e.stopPropagation()
+    e.preventDefault()
+    onSelect()
+    dragRef.current = {
+      startX: e.clientX,
+      startY: e.clientY,
+      origX: block.x,
+      origY: block.y,
+      moved: false,
+    }
+    ;(e.currentTarget as Element).setPointerCapture(e.pointerId)
+  }
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!dragRef.current) return
+    const dx = (e.clientX - dragRef.current.startX) / scale
+    const dy = (e.clientY - dragRef.current.startY) / scale
+    if (Math.abs(dx) + Math.abs(dy) > 1) dragRef.current.moved = true
+    if (dragRef.current.moved) {
+      onChange({ x: dragRef.current.origX + dx, y: dragRef.current.origY + dy })
+    }
+  }
+
+  const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!dragRef.current) return
+    const wasMoved = dragRef.current.moved
+    dragRef.current = null
+    try { (e.currentTarget as Element).releasePointerCapture(e.pointerId) } catch {}
+    // A click without movement on an already-selected block enters edit mode.
+    if (!wasMoved && selected) setEditing(true)
+  }
+
+  const handleBlur = () => {
+    if (!editRef.current) { setEditing(false); return }
+    const text = editRef.current.innerText.replace(/ /g, ' ')
+    setEditing(false)
+    if (text !== block.text) onChange({ text })
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (editing) {
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        if (editRef.current) editRef.current.innerText = block.text
+        setEditing(false)
+      }
+      return
+    }
+    if (selected && (e.key === 'Delete' || e.key === 'Backspace')) {
+      e.preventDefault()
+      onDelete()
+      return
+    }
+    if (selected && e.key.startsWith('Arrow')) {
+      e.preventDefault()
+      const step = e.shiftKey ? 10 : 1
+      const map: Record<string, [number, number]> = {
+        ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step],
+      }
+      const [dx, dy] = map[e.key]
+      onChange({ x: block.x + dx, y: block.y + dy })
+    }
+  }
+
+  const blockStyle: CSSProperties = {
+    position: 'absolute',
+    left: block.x * scale,
+    top: block.y * scale,
+    fontSize: block.fontSize * scale,
+    fontFamily: block.fontFamily,
+    fontWeight: block.bold ? 700 : 400,
+    fontStyle: block.italic ? 'italic' : 'normal',
+    color: block.color,
+    lineHeight: 1.15,
+    whiteSpace: 'pre',
+    background: 'white',
+    padding: '0 1px',
+    cursor: editing ? 'text' : 'move',
+    outline: selected ? '1px dashed #FF5C00' : '1px dashed transparent',
+    outlineOffset: '1px',
+    userSelect: editing ? 'text' : 'none',
+  }
+
+  return (
+    <div
+      ref={editRef}
+      style={blockStyle}
+      contentEditable={editing}
+      suppressContentEditableWarning
+      tabIndex={0}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onBlur={editing ? handleBlur : undefined}
+      onKeyDown={handleKeyDown}
+      onMouseEnter={(e) => { if (!selected) e.currentTarget.style.outlineColor = 'rgba(255,92,0,0.35)' }}
+      onMouseLeave={(e) => { if (!selected) e.currentTarget.style.outlineColor = 'transparent' }}
+    >
+      {block.text}
+    </div>
+  )
+}
+
 // ─── Shared style helpers ─────────────────────────────────────────────────────
 
 function fieldInput(extra: CSSProperties = {}): CSSProperties {
@@ -193,11 +382,36 @@ export default function EditorPage() {
   const [layout, setLayout] = useState<'single' | 'two'>('single')
 
   // ── Upload / parse state ─────────────────────────────────────────────────
-  type Phase = 'upload' | 'parsing' | 'editing'
-  const [phase, setPhase] = useState<Phase>('upload')
+  type Mode = 'upload' | 'parsing' | 'imported' | 'structured'
+  const [mode, setMode] = useState<Mode>('upload')
   const [uploadError, setUploadError] = useState<string | null>(null)
   const [dragOver, setDragOver] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // ── Imported PDF state ───────────────────────────────────────────────────
+  const [importedDoc, setImportedDoc] = useState<ImportedDoc | null>(null)
+  const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null)
+
+  const updateBlock = useCallback((pageIndex: number, blockId: string, patch: Partial<TextBlock>) => {
+    setImportedDoc((doc) => {
+      if (!doc) return doc
+      const pages = doc.pages.map((p, i) => {
+        if (i !== pageIndex) return p
+        return { ...p, blocks: p.blocks.map((b) => (b.id === blockId ? { ...b, ...patch } : b)) }
+      })
+      return { ...doc, pages }
+    })
+  }, [])
+
+  const deleteBlock = useCallback((pageIndex: number, blockId: string) => {
+    setImportedDoc((doc) => {
+      if (!doc) return doc
+      const pages = doc.pages.map((p, i) =>
+        i !== pageIndex ? p : { ...p, blocks: p.blocks.filter((b) => b.id !== blockId) }
+      )
+      return { ...doc, pages }
+    })
+  }, [])
 
   // ── Export dropdown ──────────────────────────────────────────────────────
   const [exportOpen, setExportOpen] = useState(false)
@@ -280,30 +494,16 @@ export default function EditorPage() {
       return
     }
     setUploadError(null)
-    setPhase('parsing')
+    setMode('parsing')
     try {
-      const parsed = await parseResumePdf(file)
-
-      // Merge — fall back to placeholder data only when a field came back empty.
-      setResumeData({
-        contact: {
-          name: parsed.contact.name || INITIAL_DATA.contact.name,
-          title: parsed.contact.title || INITIAL_DATA.contact.title,
-          email: parsed.contact.email,
-          phone: parsed.contact.phone,
-          location: parsed.contact.location,
-          linkedin: parsed.contact.linkedin,
-        },
-        experience: parsed.experience.length ? parsed.experience : INITIAL_DATA.experience,
-        education: parsed.education.length ? parsed.education : INITIAL_DATA.education,
-        skills: parsed.skills.length ? parsed.skills : INITIAL_DATA.skills,
-      })
+      const doc = await loadPdfDocument(file)
+      setImportedDoc(doc)
       setDocName(file.name.replace(/\.pdf$/i, ''))
-      setPhase('editing')
+      setMode('imported')
     } catch (err) {
-      console.error('PDF parse failed:', err)
+      console.error('PDF load failed:', err)
       setUploadError('Could not read this PDF. Try a different file or start blank.')
-      setPhase('upload')
+      setMode('upload')
     }
   }
 
@@ -322,7 +522,56 @@ export default function EditorPage() {
 
   // ── PDF export ────────────────────────────────────────────────────────────
 
+  async function handleExportImportedPdf() {
+    if (!importedDoc) return
+    setExportOpen(false)
+    try {
+      const { jsPDF } = await import('jspdf')
+      const first = importedDoc.pages[0]
+      const doc = new jsPDF({
+        unit: 'pt',
+        format: [first.width, first.height],
+        orientation: first.width > first.height ? 'landscape' : 'portrait',
+      })
+
+      for (let i = 0; i < importedDoc.pages.length; i++) {
+        const page = importedDoc.pages[i]
+        if (i > 0) doc.addPage([page.width, page.height])
+
+        // Background (preserves graphics, lines, images from original).
+        doc.addImage(page.bgDataUrl, 'PNG', 0, 0, page.width, page.height)
+
+        // White rectangles cover the original text behind every editable block,
+        // so edits and repositioning don't double up.
+        doc.setFillColor(255, 255, 255)
+        for (const b of page.blocks) {
+          const padding = 1
+          doc.rect(b.x - padding, b.y - padding, b.width + padding * 2, b.fontSize * 1.25 + padding * 2, 'F')
+        }
+
+        // Editable text on top.
+        for (const b of page.blocks) {
+          const isSerif = /serif|times|georgia/i.test(b.fontFamily)
+          const family = isSerif ? 'times' : 'helvetica'
+          const style = b.bold && b.italic ? 'bolditalic' : b.bold ? 'bold' : b.italic ? 'italic' : 'normal'
+          doc.setFont(family, style)
+          doc.setFontSize(b.fontSize)
+          const c = b.color.replace('#', '')
+          doc.setTextColor(parseInt(c.slice(0, 2), 16), parseInt(c.slice(2, 4), 16), parseInt(c.slice(4, 6), 16))
+          doc.text(b.text, b.x, b.y + b.fontSize * 0.85)
+        }
+      }
+
+      doc.save(`${docName || 'resume'}.pdf`)
+    } catch (err) {
+      console.error('Imported PDF export failed:', err)
+    }
+  }
+
   async function handleExportPdf() {
+    if (mode === 'imported') {
+      return handleExportImportedPdf()
+    }
     setExportOpen(false)
     try {
       const { jsPDF } = await import('jspdf')
@@ -784,24 +1033,24 @@ export default function EditorPage() {
       <Header />
 
       {/* Upload gate */}
-      {phase !== 'editing' && (
+      {(mode === 'upload' || mode === 'parsing') && (
         <main className="flex-1 flex items-center justify-center px-6">
           <div className="bg-bg-card border border-border-default rounded-2xl p-12 max-w-[520px] w-full flex flex-col items-center gap-5 text-center">
             <div className="w-14 h-14 rounded-2xl bg-[#FF5C0020] flex items-center justify-center">
-              {phase === 'parsing' ? <Loader2 size={26} className="text-accent animate-spin" /> : <Upload size={26} color="#FF5C00" />}
+              {mode === 'parsing' ? <Loader2 size={26} className="text-accent animate-spin" /> : <Upload size={26} color="#FF5C00" />}
             </div>
             <div className="flex flex-col gap-2">
               <h2 className="font-serif text-[26px] text-text-primary font-normal m-0">
-                {phase === 'parsing' ? 'Reading your resume…' : 'Upload your resume'}
+                {mode === 'parsing' ? 'Reading your resume…' : 'Upload your resume'}
               </h2>
               <p className="text-text-secondary text-[14px] leading-relaxed m-0">
-                {phase === 'parsing'
+                {mode === 'parsing'
                   ? 'Extracting text and matching it to editor fields.'
                   : 'Drop a PDF and we’ll parse it into editable fields. Anything we miss, you can fix in the editor.'}
               </p>
             </div>
 
-            {phase === 'upload' && (
+            {mode === 'upload' && (
               <>
                 <div
                   onClick={() => fileInputRef.current?.click()}
@@ -829,7 +1078,7 @@ export default function EditorPage() {
                   <p className="text-[#EF4444] text-xs m-0">{uploadError}</p>
                 )}
                 <button
-                  onClick={() => setPhase('editing')}
+                  onClick={() => setMode('structured')}
                   className="bg-transparent border-none text-text-secondary text-[13px] cursor-pointer underline"
                 >
                   Or start with a blank resume
@@ -840,7 +1089,7 @@ export default function EditorPage() {
         </main>
       )}
 
-      {phase === 'editing' && <>
+      {(mode === 'imported' || mode === 'structured') && <>
 
       {/* Editor toolbar */}
       <div className="h-[52px] bg-bg-elevated border-b border-border-default flex items-center px-5 gap-3 flex-shrink-0">
@@ -904,57 +1153,84 @@ export default function EditorPage() {
       {/* Three-panel body */}
       <div className="flex-1 flex overflow-hidden">
 
-        {/* ── Left: Sections panel ── */}
-        <aside className="w-60 flex-shrink-0 bg-bg-elevated border-r border-border-default flex flex-col overflow-hidden">
-          <div className={SIDEBAR_HEADER_CLASS}>
-            Sections
-          </div>
-
-          <div className="flex-1 overflow-y-auto p-2">
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
-            >
-              <SortableContext items={sections.map((s) => s.id)} strategy={verticalListSortingStrategy}>
-                {sections.map((section) => (
-                  <SortableSectionRow
-                    key={section.id}
-                    section={section}
-                    onToggle={() => toggleSection(section.id)}
-                    accentColor={accentColor}
-                  />
-                ))}
-              </SortableContext>
-            </DndContext>
-          </div>
-
-          <div className="p-3 border-t border-border-default flex-shrink-0">
-            <button className="w-full p-2 bg-transparent border border-dashed border-border-default rounded-md text-text-secondary text-[13px] cursor-pointer">
-              + Add Section
-            </button>
-          </div>
-        </aside>
-
-        {/* ── Center: Editable resume canvas ── */}
-        <main className="flex-1 bg-bg-base overflow-y-auto flex items-start justify-center px-8 pt-10 pb-20">
-          {/* US Letter resume card: 8.5 × 11 inches at 96dpi */}
-          <div
-            className="w-[816px] h-[1056px] bg-white rounded flex flex-col p-[52px] overflow-hidden flex-shrink-0 shadow-[0_8px_40px_rgba(0,0,0,0.6)]"
-          >
-            {visibleSections.map((sec, i) => (
-              <div key={sec.id}>
-                {renderSection(sec)}
-                {/* Accent divider between sections */}
-                {i < visibleSections.length - 1 && (
-                  <div className="my-5" style={{ height: '1.5px', backgroundColor: accentColor }} />
-                )}
+        {mode === 'structured' && (
+          <>
+            {/* ── Left: Sections panel ── */}
+            <aside className="w-60 flex-shrink-0 bg-bg-elevated border-r border-border-default flex flex-col overflow-hidden">
+              <div className={SIDEBAR_HEADER_CLASS}>
+                Sections
               </div>
+
+              <div className="flex-1 overflow-y-auto p-2">
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={handleDragEnd}
+                >
+                  <SortableContext items={sections.map((s) => s.id)} strategy={verticalListSortingStrategy}>
+                    {sections.map((section) => (
+                      <SortableSectionRow
+                        key={section.id}
+                        section={section}
+                        onToggle={() => toggleSection(section.id)}
+                        accentColor={accentColor}
+                      />
+                    ))}
+                  </SortableContext>
+                </DndContext>
+              </div>
+
+              <div className="p-3 border-t border-border-default flex-shrink-0">
+                <button className="w-full p-2 bg-transparent border border-dashed border-border-default rounded-md text-text-secondary text-[13px] cursor-pointer">
+                  + Add Section
+                </button>
+              </div>
+            </aside>
+
+            {/* ── Center: Editable resume canvas ── */}
+            <main className="flex-1 bg-bg-base overflow-y-auto flex items-start justify-center px-8 pt-10 pb-20">
+              {/* US Letter resume card: 8.5 × 11 inches at 96dpi */}
+              <div
+                className="w-[816px] h-[1056px] bg-white rounded flex flex-col p-[52px] overflow-hidden flex-shrink-0 shadow-[0_8px_40px_rgba(0,0,0,0.6)]"
+              >
+                {visibleSections.map((sec, i) => (
+                  <div key={sec.id}>
+                    {renderSection(sec)}
+                    {/* Accent divider between sections */}
+                    {i < visibleSections.length - 1 && (
+                      <div className="my-5" style={{ height: '1.5px', backgroundColor: accentColor }} />
+                    )}
+                  </div>
+                ))}
+              </div>
+            </main>
+          </>
+        )}
+
+        {mode === 'imported' && importedDoc && (
+          <main
+            className="flex-1 bg-bg-base overflow-y-auto flex flex-col items-center px-8 pt-10 pb-20 gap-8"
+            onMouseDown={(e) => {
+              // Click outside any block deselects.
+              if (e.target === e.currentTarget) setSelectedBlockId(null)
+            }}
+          >
+            {importedDoc.pages.map((page, pageIndex) => (
+              <ImportedPageCanvas
+                key={pageIndex}
+                page={page}
+                pageIndex={pageIndex}
+                selectedBlockId={selectedBlockId}
+                setSelectedBlockId={setSelectedBlockId}
+                onChangeBlock={updateBlock}
+                onDeleteBlock={deleteBlock}
+              />
             ))}
-          </div>
-        </main>
+          </main>
+        )}
 
         {/* ── Right: Customize panel ── */}
+        {mode === 'structured' && (
         <aside className="w-[280px] flex-shrink-0 bg-bg-elevated border-l border-border-default flex flex-col overflow-y-auto">
           <div className={SIDEBAR_HEADER_CLASS}>
             Customize
@@ -1055,6 +1331,7 @@ export default function EditorPage() {
 
           </div>
         </aside>
+        )}
       </div>
       </>}
       </div>
